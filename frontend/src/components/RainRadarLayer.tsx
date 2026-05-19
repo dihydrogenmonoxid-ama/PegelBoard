@@ -41,6 +41,8 @@ export default function RainRadarLayer({ map }: Props) {
           opacity: 0.5,
           attribution: 'RainViewer',
           zIndex: 10,
+          maxNativeZoom: 12,
+          maxZoom: 19,
         });
         layerRef.current.addTo(map);
       })

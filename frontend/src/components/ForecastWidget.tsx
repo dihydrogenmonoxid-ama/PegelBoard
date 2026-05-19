@@ -24,7 +24,11 @@ function formatHour(iso: string) {
   return new Date(iso).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
 }
 
-export default function ForecastWidget() {
+interface ForecastWidgetProps {
+  embedded?: boolean;
+}
+
+export default function ForecastWidget({ embedded = false }: ForecastWidgetProps) {
   const [hours, setHours] = useState<ForecastHour[]>([]);
 
   useEffect(() => {
@@ -49,7 +53,7 @@ export default function ForecastWidget() {
   if (hours.length === 0) return null;
 
   return (
-    <div className="glass rounded-xl p-2 flex-shrink-0">
+    <div className={`${embedded ? '' : 'glass rounded-xl '}p-2 flex-shrink-0`}>
       <p className="text-xs font-bold mb-1.5 px-1" style={{ color: 'var(--color-pb-blue-light)' }}>VORHERSAGE</p>
       <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${hours.length}, 1fr)` }}>
         {hours.map((h) => (

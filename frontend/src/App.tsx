@@ -4,13 +4,10 @@ import { api } from './api';
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import AdminLayout from './pages/admin/AdminLayout';
-import AdminOverview from './pages/admin/AdminOverview';
 import StationsPage from './pages/admin/StationsPage';
 import ConfigPage from './pages/admin/ConfigPage';
 import UsersPage from './pages/admin/UsersPage';
-import OpsLogPage from './pages/admin/OpsLogPage';
 import ResourcesPage from './pages/admin/ResourcesPage';
-import AaoPage from './pages/admin/AaoPage';
 
 function ProtectedRoute() {
   const [auth, setAuth] = useState<'loading' | 'ok' | 'fail'>('loading');
@@ -36,13 +33,13 @@ export default function App() {
         <Route path="/admin/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminOverview />} />
+            <Route index element={<Navigate to="/admin/stations" replace />} />
             <Route path="stations" element={<StationsPage />} />
             <Route path="config" element={<ConfigPage />} />
             <Route path="users" element={<UsersPage />} />
-            <Route path="ops" element={<OpsLogPage />} />
+            <Route path="ops" element={<Navigate to="/admin/resources" replace />} />
             <Route path="resources" element={<ResourcesPage />} />
-            <Route path="aao" element={<AaoPage />} />
+            <Route path="aao" element={<Navigate to="/admin/resources" replace />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

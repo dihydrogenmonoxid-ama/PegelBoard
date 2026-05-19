@@ -4,13 +4,10 @@ import { api } from '../../api';
 import { PegelBoardMark } from '../../components/PegelBoardMark';
 
 const NAV = [
-  { to: '/admin',           label: 'Übersicht',        icon: '◉', end: true },
-  { to: '/admin/stations',  label: 'Pegelstationen',   icon: '〰' },
-  { to: '/admin/config',    label: 'Konfiguration',    icon: '⚙' },
-  { to: '/admin/users',     label: 'Passwort',         icon: '🔑' },
-  { to: '/admin/ops',       label: 'Einsatzlog',       icon: '📋' },
-  { to: '/admin/resources', label: 'Einsatzmittel',    icon: '🚤' },
-  { to: '/admin/aao',       label: 'Alarm & Ausrückordnung', icon: '📊' },
+  { to: '/admin/stations',  label: 'Pegelstationen',        icon: '〰' },
+  { to: '/admin/config',    label: 'Konfiguration',         icon: '⚙' },
+  { to: '/admin/users',     label: 'Passwort',              icon: '🔑' },
+  { to: '/admin/resources', label: 'Einsatzmittel und AAO', icon: '🚤' },
 ];
 
 export default function AdminLayout() {
@@ -42,8 +39,8 @@ export default function AdminLayout() {
             <p className="text-xs mt-0.5" style={{ color: 'var(--theme-text-faint)' }}>Administration</p>
           </div>
         </div>
-        {NAV.map(({ to, label, icon, end }) => (
-          <NavLink key={to} to={to} end={end}
+        {NAV.map(({ to, label, icon }) => (
+          <NavLink key={to} to={to} end
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
                 isActive ? 'bg-pb-signal text-white font-medium' : 'text-white/60 hover:text-white hover:bg-white/5'

@@ -13,13 +13,39 @@ export interface MapStation {
   warnLevel?: 'normal' | 'elevated' | 'critical' | 'alarm';
 }
 
+export type MapStyle = 'dark' | 'osm' | 'light' | 'contrast';
+
+const TILE_LAYERS: Record<MapStyle, { url: string; attribution: string; subdomains?: string }> = {
+  dark: {
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+  },
+  light: {
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+  },
+  osm: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: 'abc',
+  },
+  contrast: {
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+  },
+};
+
 interface Props {
   stations: MapStation[];
   centerLat?: number;
   centerLon?: number;
   locationBbox?: [number, number, number, number]; // [south, north, west, east]
   helicopters?: Helicopter[];
-  openskEnabled?: boolean;
+  openskyEnabled?: boolean;
+  mapStyle?: MapStyle;
 }
 
 const LEVEL_COLOR: Record<string, string> = {
@@ -39,23 +65,26 @@ export default function MapWidget({
   centerLon = 10.5,
   locationBbox,
   helicopters = [],
-  openskEnabled = false,
+  openskyEnabled = false,
+  mapStyle = 'dark',
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersRef = useRef<L.CircleMarker[]>([]);
   const initialViewSetRef = useRef(false);
 
-  // Karte initialisieren — ohne initiales setView, da fitBounds den ersten Zoom übernimmt
+  // Karte initialisieren
   useEffect(() => {
     if (!containerRef.current) return;
     const map = L.map(containerRef.current, { zoomControl: false, attributionControl: true })
-      .setView([centerLat, centerLon], 8);
+      .setView([centerLat, centerLon], 12);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 18,
+    const style = TILE_LAYERS[mapStyle] ?? TILE_LAYERS.dark;
+    tileLayerRef.current = L.tileLayer(style.url, {
+      attribution: style.attribution,
+      subdomains: style.subdomains ?? 'abc',
+      maxZoom: 19,
     }).addTo(map);
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -70,12 +99,30 @@ export default function MapWidget({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Kartenstil wechseln ohne Neuinitialisierung
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (tileLayerRef.current) {
+      tileLayerRef.current.remove();
+    }
+    const style = TILE_LAYERS[mapStyle] ?? TILE_LAYERS.dark;
+    tileLayerRef.current = L.tileLayer(style.url, {
+      attribution: style.attribution,
+      subdomains: style.subdomains ?? 'abc',
+      maxZoom: 19,
+    }).addTo(map);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapStyle]);
+
   // Initialer Zoom auf Gebietskörperschaft sobald bbox bekannt ist
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !locationBbox || initialViewSetRef.current) return;
     const [south, north, west, east] = locationBbox;
     map.fitBounds([[south, west], [north, east]], { padding: [20, 20] });
+    // Minimum zoom 12 – näher an den Heimatort heranzoomen
+    if (map.getZoom() < 12) map.setZoom(12);
     initialViewSetRef.current = true;
   }, [locationBbox]);
 
@@ -131,7 +178,7 @@ export default function MapWidget({
       {/* Rain radar toggle button + layer */}
       <RainRadarLayer map={mapRef.current} />
       {/* Helicopter layer */}
-      {openskEnabled && <HelicopterLayer map={mapRef.current} helicopters={helicopters} />}
+      {openskyEnabled && <HelicopterLayer map={mapRef.current} helicopters={helicopters} />}
     </div>
   );
 }

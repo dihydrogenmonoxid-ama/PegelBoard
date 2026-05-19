@@ -4,7 +4,7 @@ import { api } from '../api';
 interface AaoMittel { einsatzmittel_id: number; reihenfolge: number }
 interface AaoStichwort { id: string; label: string; mittel: AaoMittel[] }
 interface AaoConfig { stichwoerter: AaoStichwort[] }
-interface Einsatzmittel { id: number; name: string; typ: string | null; has_icon: boolean }
+interface Einsatzmittel { id: number; name: string; klarname: string | null; typ: string | null; has_icon: boolean }
 
 export default function AaoWidget() {
   const [config, setConfig] = useState<AaoConfig | null>(null);
@@ -49,7 +49,7 @@ export default function AaoWidget() {
                       {e.has_icon && (
                         <img src={`/api/einsatzmittel/${e.id}/icon`} alt="" className="w-3.5 h-3.5 object-contain" />
                       )}
-                      {e.name}
+                      {e.klarname ?? e.name}
                     </div>
                   ))}
                 </div>

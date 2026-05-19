@@ -86,6 +86,8 @@ export default function GaugeWidget({ onReadingsChange, liveUpdates }: Props) {
       stns.map(async (s) => {
         try {
           const data = await api.get<{
+            latitude?: number | null;
+            longitude?: number | null;
             timeseries?: Array<{
               shortname: string;
               unit: string;
@@ -102,8 +104,8 @@ export default function GaugeWidget({ onReadingsChange, liveUpdates }: Props) {
             stationId: s.station_id,
             name:      s.name,
             river:     s.river,
-            latitude:  s.latitude,
-            longitude: s.longitude,
+            latitude:  s.latitude ?? data.latitude ?? null,
+            longitude: s.longitude ?? data.longitude ?? null,
             value,
             waterTemp: tsWT?.currentMeasurement?.value ?? null,
             trend:     ts?.currentMeasurement?.trend ?? null,

@@ -16,6 +16,8 @@ const PUBLIC_KEYS = new Set([
   'dashboard_layout',
   'daynight_mode',
   'opensky_enabled',
+  'tagesnachricht',
+  'map_style',
 ]);
 
 export async function publicConfigRoutes(fastify: FastifyInstance) {

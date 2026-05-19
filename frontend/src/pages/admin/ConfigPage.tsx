@@ -100,16 +100,29 @@ export default function ConfigPage() {
     } finally { setSaving(false); }
   }
 
+  const MAP_STYLE_OPTIONS = [
+    { value: 'dark',     label: 'Carto Dark (Standard)' },
+    { value: 'light',    label: 'Carto Light' },
+    { value: 'osm',      label: 'OSM Standard' },
+    { value: 'contrast', label: 'Hochkontrast (Voyager)' },
+  ];
+
   if (loading) return <div className="text-white/30 text-sm">Lade …</div>;
 
   return (
-    <div className="flex flex-col gap-8 max-w-xl">
+    <div className="flex flex-col gap-6 max-w-5xl">
       <div>
         <h1 className="text-2xl font-bold text-white">Konfiguration</h1>
         <p className="text-white/40 text-sm mt-1">Standort, API-Keys und Darstellung</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+
+        {/* 2-column grid layout */}
+        <div className="grid grid-cols-2 gap-6 items-start">
+
+        {/* ── Spalte 1 ── */}
+        <div className="flex flex-col gap-6">
 
         {/* Heimatstandort */}
         <section className="glass rounded-2xl p-6 flex flex-col gap-5">
@@ -264,6 +277,16 @@ export default function ConfigPage() {
             <span className="text-xs text-white/30">Wird zentriert im Dashboard-Header angezeigt (PNG/SVG empfohlen)</span>
           </div>
 
+          {/* Kartenstil */}
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-white/60 uppercase tracking-wider">Kartenstil</span>
+            <select className={inputCls} value={values['map_style'] ?? 'dark'} onChange={(e) => set('map_style', e.target.value)}>
+              {MAP_STYLE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </label>
+
           {/* Warn colors */}
           <div className="flex flex-col gap-3">
             <span className="text-xs font-medium text-white/60 uppercase tracking-wider">Warnfarben</span>
@@ -296,6 +319,24 @@ export default function ConfigPage() {
             <span className="text-xs text-white/30">Automatisch erfordert konfigurierten Standort (lat/lon)</span>
           </label>
         </section>
+
+        {/* Tagesnachricht */}
+        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+          <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">Tagesnachricht</h2>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-white/60 uppercase tracking-wider">Nachricht (optional)</span>
+            <input className={inputCls} type="text"
+              placeholder="z. B. Schicht A – Bootsführer: Müller"
+              value={values['tagesnachricht'] ?? ''}
+              onChange={(e) => set('tagesnachricht', e.target.value)} />
+            <span className="text-xs text-white/30">Wird im Dashboard-Footer angezeigt (neben Warnungen). Leer = keine Anzeige.</span>
+          </label>
+        </section>
+
+        </div>{/* Ende Spalte 1 */}
+
+        {/* ── Spalte 2 ── */}
+        <div className="flex flex-col gap-6">
 
         {/* GPIO */}
         <section className="glass rounded-2xl p-6 flex flex-col gap-5">
@@ -407,6 +448,9 @@ export default function ConfigPage() {
             <p className="text-xs text-white/20">Noch keine Mappings konfiguriert.</p>
           )}
         </section>
+
+        </div>{/* Ende Spalte 2 */}
+        </div>{/* Ende Grid */}
 
         {feedback && (
           <p className={`text-sm rounded-lg px-4 py-2.5 ${feedback.ok ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'}`}>

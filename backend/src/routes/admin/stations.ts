@@ -37,6 +37,8 @@ export async function adminStationRoutes(fastify: FastifyInstance) {
             station_id: { type: 'string' },
             name: { type: 'string' },
             river: { type: 'string' },
+            latitude: { type: 'number' },
+            longitude: { type: 'number' },
             warning_low: { type: 'number' },
             warning_medium: { type: 'number' },
             warning_high: { type: 'number' },

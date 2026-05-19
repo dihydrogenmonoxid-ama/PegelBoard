@@ -85,6 +85,7 @@ for (const col of [
 for (const col of [
   'issi TEXT',
   'icon_data TEXT',
+  'klarname TEXT',
 ]) {
   try { db.exec(`ALTER TABLE einsatzmittel ADD COLUMN ${col}`); } catch { /* bereits vorhanden */ }
 }

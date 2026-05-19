@@ -72,23 +72,26 @@ Das Dashboard ist für **große Monitore und Lageräume** konzipiert: lesbar aus
 - Rote Pulsanimation bei Überschreitung des Alarmwertes
 
 ### 🗺️ Interaktive Karte
-- **Pegelmarker** farbig nach Warnstufe (grün → gelb → orange → rot)
+- **Pegelmarker** farbig nach Warnstufe (grün → gelb → orange → rot), inkl. Wassertemperatur
 - **Regenradar** per Knopfdruck (RainViewer, kein API-Key nötig)
-- Optionales **Hubschrauber-Tracking** via OpenSky Network 🚁
+- Optionales **Hubschrauber-Tracking** via OpenSky Network 🚁 mit Klarname-Mapping
+- Wählbare **Kartenstile**: Carto Dark, Carto Light, OSM Standard, Hochkontrast
 
 ### ⚠️ Warnungen
 - **NINA / MoWaS** – offizielle Bevölkerungsschutzwarnungen
 - **DWD-Wetterwarnungen** – Sturm, Gewitter, Hochwasser, Starkregen
+- **LHP-Hochwasserwarnungen** direkt am Pegel angezeigt
 - Sortiert nach Schweregrad, farbcodiert, immer sichtbar in der Fußzeile
 
 ### 🌤️ Wetter & Wind
 - Aktuelle Bedingungen via **Bright Sky** (DWD-Daten, kein API-Key nötig)
-- 6-Stunden-Vorhersage als horizontaler Streifen
+- 6-Stunden-Vorhersage im gemeinsamen Wetter-Container
 - Windstärke in **Beaufort** mit animierter Kompassrose
+- Sonnenauf- und -untergang in der Rechtspalte
 
 ### 🕐 Intelligente Tageszeitsteuerung
 - **Automatischer Hell-/Dunkel-Wechsel** bei Sonnenauf- und -untergang
-- Sonnenzeiten immer sichtbar in der Kopfzeile – kein API-Key, berechnet aus dem Standort
+- Sonnenzeiten immer sichtbar – kein API-Key, berechnet aus dem Standort
 - Manuell überschreibbar im Admin
 
 ### 📡 Offline-Resilient
@@ -102,10 +105,10 @@ Das Dashboard ist für **große Monitore und Lageräume** konzipiert: lesbar aus
 - Konfigurierbare GPIO-Pins im Admin
 
 ### 📋 Einsatzbetrieb
-- **Tagesnachricht** – Freitextnachricht für alle Schichtdienstler im Blick
+- **Tagesnachricht** – Freitextnachricht im Dashboard-Header für alle Schichtdienstler sichtbar
 - **Einsatzanmerkungen** – timestamptes Log für Lagefeststellungen
-- **Einsatzmittel** – Ressourcenliste mit Verfügbarkeitsstatus
-- **AAO-Matrix** – wer fährt bei welchem Pegelstand (mit eigenen Fahrzeug-Icons)
+- **Einsatzmittel** – Ressourcenliste mit Status, Klarname (Funkrufzeichen), ISSI und Icon
+- **AAO-Matrix** – Alarm- und Ausrückordnung mit eigenen Fahrzeug-Icons und Reihenfolge
 
 ---
 
@@ -160,10 +163,10 @@ Alles läuft über das **Webinterface** – kein Editieren von Config-Dateien:
 | Bereich | Was lässt sich einstellen |
 |---|---|
 | **Pegelstationen** | Stationen suchen & hinzufügen, Warnschwellen (Erhöht / Kritisch / Alarm / HQ100) |
-| **Karte** | Standort, Regenradar-Layer, Hubschrauber-Tracking |
+| **Karte** | Standort, Kartenstil (Dark / Light / OSM / Hochkontrast), Regenradar, Hubschrauber-Tracking |
 | **Warnungen** | NINA-Gemeindeschlüssel (AGS), DWD-Regionsfilter |
 | **Darstellung** | Hell-/Dunkel-Modus, Warnfarben, Logo, Tagesnachricht |
-| **Einsatzbetrieb** | Einsatzmittel, AAO-Matrix, Fahrzeug-Icons hochladen |
+| **Einsatzbetrieb** | Einsatzmittel (inkl. Klarname), AAO-Matrix, Fahrzeug-Icons hochladen |
 | **GPIO** | Signalturm-Pins, Schwellwerte |
 | **API-Keys** | OpenSky (Heli-Tracking), RSS-Feed-URL |
 
@@ -217,10 +220,20 @@ Keine Cloud-Abhängigkeiten. Keine externen Dienste außer den Datenquellen. Lä
 
 ---
 
+## Geplante Features
+
+- [ ] **Mehrsprachigkeit** – Übersetzungen (DE/EN)
+- [ ] **Multi-Location** – mehrere Standorte / Wachbereiche umschalten
+- [ ] **Push-Benachrichtigungen** – Alarmierung über NINA oder Pegelgrenzwert per Webhook
+- [ ] **Tidekalender** – Gezeitenanzeige für Küstenwachen
+- [ ] **Kamerabild-Integration** – Livebild einer Webcam im Dashboard
+- [ ] **Exportfunktion** – Einsatzlog als PDF exportieren
+- [ ] **Dark-Mode-Farbprofile** – mehrere vordefinierte Farbschemata wählbar
+
+---
+
 ## Lizenz
 
 GPL v3
 
 ---
-
-

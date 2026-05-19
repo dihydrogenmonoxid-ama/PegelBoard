@@ -46,7 +46,11 @@ const BEAU_LABEL = [
   'Sturm', 'Starker Sturm', 'Orkanartiger Sturm', 'Orkan',
 ];
 
-export default function WeatherWidget() {
+interface WeatherWidgetProps {
+  embedded?: boolean;
+}
+
+export default function WeatherWidget({ embedded = false }: WeatherWidgetProps) {
   const [weather, setWeather] = useState<Weather | null>(null);
   const [station, setStation] = useState('');
   const [error, setError] = useState(false);
@@ -63,13 +67,13 @@ export default function WeatherWidget() {
   }, []);
 
   if (error) return (
-    <div className="glass rounded-2xl h-full flex items-center justify-center">
+    <div className={`${embedded ? '' : 'glass rounded-2xl '}h-full flex items-center justify-center`}>
       <p className="text-xs" style={{ color: 'var(--theme-text-faint)' }}>Wetter nicht verfügbar</p>
     </div>
   );
 
   if (!weather) return (
-    <div className="glass rounded-2xl h-full flex items-center justify-center">
+    <div className={`${embedded ? '' : 'glass rounded-2xl '}h-full flex items-center justify-center`}>
       <div className="w-5 h-5 border-2 rounded-full animate-spin"
         style={{ borderColor: 'var(--theme-border)', borderTopColor: 'var(--theme-text-muted)' }} />
     </div>
@@ -83,7 +87,7 @@ export default function WeatherWidget() {
     : 'var(--color-warn-alarm)';
 
   return (
-    <div className="glass rounded-2xl h-full flex flex-col p-4 gap-3 overflow-hidden">
+    <div className={`${embedded ? '' : 'glass rounded-2xl '}h-full flex flex-col p-4 gap-3 overflow-hidden`}>
       {/* Header */}
       <div className="flex items-center justify-between flex-shrink-0">
         <p className="text-xs uppercase tracking-widest" style={{ color: 'var(--theme-text-muted)' }}>Wetter</p>

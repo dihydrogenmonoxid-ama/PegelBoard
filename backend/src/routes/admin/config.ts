@@ -17,6 +17,7 @@ const ALLOWED_KEYS = new Set([
   'dashboard_layout',
   'tagesnachricht',
   'daynight_mode',
+  'map_style',
   // Warnfarben
   'color_warn_normal',
   'color_warn_elevated',

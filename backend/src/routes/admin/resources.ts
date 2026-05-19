@@ -4,6 +4,7 @@ import { db } from '../../db/database.js';
 interface Einsatzmittel {
   id: number;
   name: string;
+  klarname: string | null;
   typ: string | null;
   status: string;
   notizen: string | null;
@@ -20,6 +21,7 @@ const bodySchema = {
   type: 'object',
   properties: {
     name: { type: 'string', minLength: 1, maxLength: 128 },
+    klarname: { type: 'string', maxLength: 128, nullable: true },
     typ: { type: 'string', maxLength: 64 },
     status: { type: 'string', maxLength: 64 },
     notizen: { type: 'string', maxLength: 500 },
@@ -59,10 +61,10 @@ export async function adminResourcesRoutes(fastify: FastifyInstance) {
     '/api/admin/einsatzmittel',
     { onRequest: [fastify.authenticate], schema: { body: { ...bodySchema, required: ['name'] } } },
     async (req) => {
-      const { name, typ, status, notizen, sort_order, issi } = req.body as Einsatzmittel;
+      const { name, klarname, typ, status, notizen, sort_order, issi } = req.body as Einsatzmittel;
       const result = db
-        .prepare('INSERT INTO einsatzmittel (name, typ, status, notizen, sort_order, issi) VALUES (?,?,?,?,?,?)')
-        .run(name, typ ?? null, status ?? 'verfügbar', notizen ?? null, sort_order ?? 0, issi ?? null);
+        .prepare('INSERT INTO einsatzmittel (name, klarname, typ, status, notizen, sort_order, issi) VALUES (?,?,?,?,?,?,?)')
+        .run(name, klarname ?? null, typ ?? null, status ?? 'verfügbar', notizen ?? null, sort_order ?? 0, issi ?? null);
       const row = db.prepare('SELECT * FROM einsatzmittel WHERE id = ?').get(result.lastInsertRowid) as unknown as Einsatzmittel;
       return toPublic(row);
     }
@@ -72,11 +74,12 @@ export async function adminResourcesRoutes(fastify: FastifyInstance) {
     '/api/admin/einsatzmittel/:id',
     { onRequest: [fastify.authenticate], schema: { body: bodySchema } },
     async (req, reply) => {
-      const { name, typ, status, notizen, sort_order, issi } = req.body as Partial<Einsatzmittel>;
+      const { name, klarname, typ, status, notizen, sort_order, issi } = req.body as Partial<Einsatzmittel>;
       const result = db
         .prepare(
           `UPDATE einsatzmittel SET
             name = COALESCE(?, name),
+            klarname = ?,
             typ = COALESCE(?, typ),
             status = COALESCE(?, status),
             notizen = COALESCE(?, notizen),
@@ -84,7 +87,7 @@ export async function adminResourcesRoutes(fastify: FastifyInstance) {
             issi = ?
           WHERE id = ?`
         )
-        .run(name ?? null, typ ?? null, status ?? null, notizen ?? null, sort_order ?? null, issi ?? null, Number(req.params.id));
+        .run(name ?? null, klarname ?? null, typ ?? null, status ?? null, notizen ?? null, sort_order ?? null, issi ?? null, Number(req.params.id));
       if (result.changes === 0) return reply.code(404).send({ error: 'Nicht gefunden' });
       const row = db.prepare('SELECT * FROM einsatzmittel WHERE id = ?').get(Number(req.params.id)) as unknown as Einsatzmittel;
       return toPublic(row);

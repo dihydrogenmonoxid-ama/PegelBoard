@@ -152,10 +152,24 @@ function NachrichtenSection() {
   );
 }
 
+// ── Tagesnachricht section ─────────────────────────────────────────────────
+
+function TagesnachrichtSection({ text }: { text: string }) {
+  return (
+    <div className="flex flex-col gap-1 overflow-hidden h-full">
+      <p className="text-xs font-bold mb-1 flex-shrink-0" style={{ color: 'var(--color-pb-blue-light)' }}>
+        TAGESNACHRICHT
+      </p>
+      <p className="text-sm font-medium" style={{ color: 'var(--theme-text)' }}>{text}</p>
+    </div>
+  );
+}
+
 // ── BottomBar ──────────────────────────────────────────────────────────────
 
 interface PublicConfig {
   show_news?: string;
+  tagesnachricht?: string;
 }
 
 interface Einsatzmittel {
@@ -216,12 +230,26 @@ function EinsatzmittelSection() {
 
 export default function BottomBar() {
   const [showNews, setShowNews] = useState(true);
+  const [tagesnachricht, setTagesnachricht] = useState('');
 
   useEffect(() => {
-    api.get<PublicConfig>('/api/config/public').then((cfg) => {
-      setShowNews(cfg.show_news !== 'false');
-    }).catch(() => {});
+    const load = () => {
+      api.get<PublicConfig>('/api/config/public').then((cfg) => {
+        setShowNews(cfg.show_news !== 'false');
+        setTagesnachricht(cfg.tagesnachricht ?? '');
+      }).catch(() => {});
+    };
+    load();
+    const t = setInterval(load, 60_000);
+    return () => clearInterval(t);
   }, []);
+
+  const sections = [
+    { key: 'warnungen', show: true, content: <WarnungenSection /> },
+    { key: 'nachrichten', show: showNews, content: <NachrichtenSection /> },
+    { key: 'tagesnachricht', show: !!tagesnachricht, content: <TagesnachrichtSection text={tagesnachricht} /> },
+    { key: 'einsatzmittel', show: true, content: <EinsatzmittelSection /> },
+  ].filter((s) => s.show);
 
   return (
     <div
@@ -229,24 +257,21 @@ export default function BottomBar() {
       style={{
         gridArea: 'bottom',
         display: 'grid',
-        gridTemplateColumns: showNews ? '1fr 1fr 1fr' : '1fr 1fr',
-        gap: '1px',
+        gridTemplateColumns: `repeat(${sections.length}, 1fr)`,
         minHeight: '140px',
         maxHeight: '200px',
         overflow: 'hidden',
       }}
     >
-      <div className="p-3 overflow-hidden" style={{ borderRight: '1px solid var(--theme-border)' }}>
-        <WarnungenSection />
-      </div>
-      {showNews && (
-        <div className="p-3 overflow-hidden" style={{ borderRight: '1px solid var(--theme-border)' }}>
-          <NachrichtenSection />
+      {sections.map((s, i) => (
+        <div
+          key={s.key}
+          className="p-3 overflow-hidden"
+          style={i < sections.length - 1 ? { borderRight: '1px solid var(--theme-border)' } : undefined}
+        >
+          {s.content}
         </div>
-      )}
-      <div className="p-3 overflow-hidden">
-        <EinsatzmittelSection />
-      </div>
+      ))}
     </div>
   );
 }

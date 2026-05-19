@@ -24,6 +24,8 @@ interface PublicConfig {
   location_bbox?: string;
   daynight_mode?: string;
   opensky_enabled?: string;
+  tagesnachricht?: string;
+  map_style?: string;
 }
 
 export default function Dashboard() {
@@ -122,12 +124,9 @@ export default function Dashboard() {
         logo={config.logo_base64}
       />
 
-      {/* Left panel: Gauges + AAO */}
-      <div style={{ gridArea: 'left', overflow: 'hidden', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div className="flex-1 min-h-0">
-          <GaugeWidget onReadingsChange={handleReadingsChange} liveUpdates={liveUpdates} />
-        </div>
-        <AaoWidget />
+      {/* Left panel: Gauges */}
+      <div style={{ gridArea: 'left', overflow: 'hidden', minHeight: 0 }}>
+        <GaugeWidget onReadingsChange={handleReadingsChange} liveUpdates={liveUpdates} />
       </div>
 
       {/* Center: Map */}
@@ -139,7 +138,8 @@ export default function Dashboard() {
             centerLon={center.lon}
             locationBbox={locationBbox}
             helicopters={helicopters}
-            openskEnabled={config.opensky_enabled === 'true'}
+            openskyEnabled={config.opensky_enabled === 'true'}
+            mapStyle={(config.map_style as import('../components/MapWidget').MapStyle) ?? 'dark'}
           />
         ) : (
           <div className="glass rounded-2xl h-full flex items-center justify-center text-xs"
@@ -149,7 +149,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Right panel: Weather + Wind + Forecast */}
+      {/* Right panel: Sonne + Wetter/Vorhersage (gemeinsamer Container) + AAO */}
       <div
         style={{
           gridArea: 'right',
@@ -161,10 +161,15 @@ export default function Dashboard() {
         }}
       >
         <SunWidget />
-        <div className="flex-1 min-h-0">
-          <WeatherWidget />
+        {/* Wetter + Vorhersage in einem gemeinsamen Glascontainer */}
+        <div className="glass rounded-2xl flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div className="flex-1 min-h-0">
+            <WeatherWidget embedded />
+          </div>
+          <div className="border-t mx-3" style={{ borderColor: 'var(--theme-border)' }} />
+          <ForecastWidget embedded />
         </div>
-        <ForecastWidget />
+        <AaoWidget />
       </div>
 
       {/* Bottom bar */}

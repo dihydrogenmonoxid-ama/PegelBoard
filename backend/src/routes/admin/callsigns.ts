@@ -11,8 +11,8 @@ interface CallsignMap {
 const bodySchema = {
   type: 'object',
   properties: {
-    icao24:           { type: 'string', maxLength: 6 },
-    callsign_pattern: { type: 'string', maxLength: 20 },
+    icao24:           { type: 'string', maxLength: 6, nullable: true },
+    callsign_pattern: { type: 'string', maxLength: 20, nullable: true },
     display_name:     { type: 'string', minLength: 1, maxLength: 64 },
   },
 };
