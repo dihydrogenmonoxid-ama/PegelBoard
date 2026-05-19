@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+frontend/dist/
+backend/dist/
+tsconfig.tsbuildinfo
+
+# Database (contains config, API keys, password hashes)
+*.db
+*.db-shm
+*.db-wal
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# Claude Code local settings
+.claude/
+
+# Editor
+.vscode/settings.json
+.idea/

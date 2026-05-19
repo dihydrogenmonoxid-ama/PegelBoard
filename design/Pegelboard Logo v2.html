@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>PegelBoard – Markenleitfaden</title>
+<style>
+  :root{
+    --bg:#f5f6f4;
+    --fg:#0b1620;
+    --muted:#6b7480;
+    --line:#e3e5e0;
+    --card:#ffffff;
+    --ink:#0b1620;
+    --water:#0a6cb0;
+    --water-2:#3aa0d8;
+    --alarm:#E30613;
+    --warn:#FFD200;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wordmark, .wordmark *{font-family: Helvetica, "Helvetica Neue", Arial, sans-serif !important;
+    letter-spacing:-0.015em;}
+  .page{max-width:1240px;margin:0 auto;padding:64px 48px 96px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;
+    border-bottom:1px solid var(--line); padding-bottom:28px; margin-bottom:56px}
+  h1{font-size:32px;font-weight:600;letter-spacing:-0.015em;margin:0}
+  .sub{color:var(--muted);font-size:13px;max-width:560px;line-height:1.55;margin-top:10px}
+  .meta{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  h2{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--muted);margin:64px 0 20px;border-top:1px solid var(--line);padding-top:28px}
+  h2:first-of-type{margin-top:0;border-top:0;padding-top:0}
+
+  .row{display:flex;gap:20px;flex-wrap:wrap}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:32px;flex:1;min-width:260px;display:flex;flex-direction:column;gap:16px;
+    align-items:center;justify-content:center}
+  .panel.dark{background:#0b1620;border-color:#0b1620;color:#e6ebf1}
+  .panel .label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);align-self:flex-start}
+  .panel.dark .label{color:#7a8a99}
+  .mono{font-family:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted)}
+
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+
+  .swatch{aspect-ratio:1; display:flex;flex-direction:column;justify-content:space-between;
+    padding:18px;border-radius:12px;border:1px solid transparent}
+  .swatch .name{font-size:13px;font-weight:600}
+  .swatch .hex{font-family:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;font-size:11px}
+
+  /* favicon row */
+  .favs{display:flex;align-items:flex-end;gap:32px;padding:32px;background:#fff;
+    border:1px solid var(--line);border-radius:14px}
+  .fav{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .fav .mono{color:var(--muted)}
+
+  /* application mocks */
+  .mock{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff;
+    display:flex;flex-direction:column}
+  .browser-bar{background:#eef0ec;border-bottom:1px solid var(--line);
+    padding:10px 14px;display:flex;align-items:center;gap:10px}
+  .dots{display:flex;gap:6px}
+  .dot{width:10px;height:10px;border-radius:50%;background:#cdd1cb}
+  .url{flex:1;background:#fff;border-radius:6px;padding:5px 10px;font-size:11px;color:var(--muted);
+    font-family:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace}
+  .app-header{display:flex;align-items:center;gap:14px;padding:18px 24px;
+    background:#0b1620;color:#e6ebf1}
+  .app-header .brand{display:flex;align-items:center;gap:12px}
+  .app-header .brand .name{font-size:20px;font-weight:600;letter-spacing:-0.01em}
+  .app-header .brand .name span{font-weight:300;color:#9fb4c6}
+  .app-header .status{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px;color:#9fb4c6}
+  .live{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.18)}
+  .app-body{aspect-ratio:16/8.5;background:linear-gradient(180deg,#0e1c2a, #0b1620);position:relative;
+    display:flex;align-items:center;justify-content:center;color:#445770;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+
+  /* Pi splash mock */
+  .splash{aspect-ratio:16/9;background:#0b1620;color:#e6ebf1;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+  .splash .name{font-size:48px;font-weight:600;letter-spacing:-0.02em}
+  .splash .name span{font-weight:300;color:#9fb4c6}
+  .splash .tagline{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#5b6f82}
+
+  /* Spec callouts */
+  .spec{display:grid;grid-template-columns: 240px 1fr;gap:32px;align-items:center;
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px}
+  .spec ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--fg)}
+  .spec li{display:flex;gap:10px}
+  .spec li b{min-width:88px;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+
+  /* don'ts */
+  .donts{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .dont{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;
+    display:flex;flex-direction:column;align-items:center;gap:12px;position:relative}
+  .dont .x{position:absolute;top:10px;right:12px;color:#c4493a;font-size:18px;font-weight:600}
+  .dont .ok{position:absolute;top:10px;right:12px;color:#3a9d6a;font-size:18px;font-weight:600}
+  .dont .cap{font-size:11px;color:var(--muted);text-align:center;line-height:1.45}
+
+  footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- Shared geometry for the final mark -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 64 64">
+      <path d="M4 22 Q 14 12 24 22 T 44 22 T 64 22"
+            fill="none" stroke="currentColor" stroke-width="5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="currentColor">
+        <rect x="10"   y="42" width="9" height="14" rx="2"/>
+        <rect x="27.5" y="36" width="9" height="20" rx="2"/>
+        <rect x="45"   y="30" width="9" height="26" rx="2"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="page">
+
+  <header>
+    <div>
+      <div class="meta">Markenleitfaden · v2 · final</div>
+      <h1>PegelBoard – Anstiegsbalken</h1>
+      <p class="sub">Eine Welle über drei steigenden Balken – Wasser und Pegelanstieg in einer Form.
+      Hauptanwendung schwarz auf weiß bzw. weiß auf schwarz. Signalblau (#0a6cb0) als einziger Akzent,
+      reserviert für aktive Zustände und Live-Daten.</p>
+    </div>
+    <div class="meta">PegelBoard · CI</div>
+  </header>
+
+  <!-- ============ PRIMARY MARK ============ -->
+  <h2>Primärmarke</h2>
+  <div class="grid-2">
+    <div class="panel">
+      <span class="label">Light · #0b1620 auf #ffffff</span>
+      <svg width="220" height="220" style="color:#0b1620"><use href="#mark"/></svg>
+      <span class="mono">pegelboard-mark-black.svg</span>
+    </div>
+    <div class="panel dark">
+      <span class="label">Dark · #f5f6f4 auf #0b1620</span>
+      <svg width="220" height="220" style="color:#f5f6f4"><use href="#mark"/></svg>
+      <span class="mono" style="color:#7a8a99">pegelboard-mark-white.svg</span>
+    </div>
+  </div>
+
+  <!-- ============ ACCENT ============ -->
+  <h2>Akzentanwendung · Signalblau</h2>
+  <div class="grid-3">
+    <div class="panel">
+      <span class="label">Mark in Blau</span>
+      <svg width="160" height="160" style="color:#0a6cb0"><use href="#mark"/></svg>
+      <span class="mono">pegelboard-mark-blue.svg</span>
+    </div>
+    <div class="panel" style="background:#0a6cb0;border-color:#0a6cb0">
+      <span class="label" style="color:rgba(255,255,255,.7)">App-Icon hell auf Blau</span>
+      <svg width="160" height="160" style="color:#f5f6f4"><use href="#mark"/></svg>
+      <span class="mono" style="color:rgba(255,255,255,.7)">pegelboard-icon-blue-bg.svg</span>
+    </div>
+    <div class="panel dark">
+      <span class="label">Lageraum · helles Blau auf Dunkel</span>
+      <svg width="160" height="160" style="color:#3aa0d8"><use href="#mark"/></svg>
+      <span class="mono" style="color:#7a8a99">pegelboard-icon-dark-bg.svg</span>
+    </div>
+  </div>
+
+  <!-- ============ WORDMARK ============ -->
+  <h2>Wortmarke · Helvetica</h2>
+  <div class="grid-2">
+    <div class="panel" style="align-items:flex-start;padding:40px">
+      <span class="label">Horizontal · Standard</span>
+      <div class="wordmark" style="display:flex;align-items:center;gap:18px;color:#0b1620">
+        <svg width="64" height="64" style="color:#0a6cb0"><use href="#mark"/></svg>
+        <div style="line-height:1">
+          <div style="font-size:36px;font-weight:700">
+            Pegel<span style="font-weight:300">Board</span>
+          </div>
+          <div style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:10px;font-weight:400">
+            Einsatzmonitor · Wasserrettung
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel dark" style="align-items:flex-start;padding:40px">
+      <span class="label">Horizontal · Dunkel</span>
+      <div class="wordmark" style="display:flex;align-items:center;gap:18px;color:#f5f6f4">
+        <svg width="64" height="64" style="color:#3aa0d8"><use href="#mark"/></svg>
+        <div style="line-height:1">
+          <div style="font-size:36px;font-weight:700">
+            Pegel<span style="font-weight:300;color:#9fb4c6">Board</span>
+          </div>
+          <div style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#7a8a99;margin-top:10px;font-weight:400">
+            Einsatzmonitor · Wasserrettung
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <h2>Typografie · Helvetica</h2>
+  <div class="spec" style="grid-template-columns: 1fr 1fr">
+    <div class="wordmark" style="display:flex;flex-direction:column;gap:10px;color:#0b1620">
+      <div style="font-size:56px;font-weight:700;line-height:1">Aa Bb 123</div>
+      <div style="font-size:13px;color:var(--muted)">Helvetica · Bold · 700</div>
+      <div style="font-size:32px;font-weight:400;line-height:1;margin-top:14px">Aa Bb 123</div>
+      <div style="font-size:13px;color:var(--muted)">Helvetica · Regular · 400</div>
+      <div style="font-size:24px;font-weight:300;line-height:1;margin-top:14px">Aa Bb 123</div>
+      <div style="font-size:13px;color:var(--muted)">Helvetica · Light · 300</div>
+    </div>
+    <ul>
+      <li><b>Primär</b><span>Helvetica – einzige Schrift im System. Keine Mischung mit anderen Sans-Serifs.</span></li>
+      <li><b>Wortmarke</b><span>„Pegel" Bold 700 · „Board" Light 300 · Tracking −0.015 em.</span></li>
+      <li><b>UI &amp; Headlines</b><span>Helvetica Regular/Bold. Größen in 8-er-Schritten: 12 · 14 · 18 · 24 · 32 · 48 px.</span></li>
+      <li><b>Subtitle / Labels</b><span>Helvetica Regular, UPPERCASE, Tracking 0.22 em.</span></li>
+      <li><b>Fallbacks</b><span>Helvetica → Helvetica Neue → Arial → system-ui. Auf dem Pi: Helvetica nicht garantiert; ggf. <span class="mono">fonts-liberation</span> (Liberation Sans, metrisch identisch) installieren oder Helvetica-Lizenzdatei mitliefern.</span></li>
+    </ul>
+  </div>
+
+  <!-- ============ SKALEN / FAVICON ============ -->
+  <h2>Skalen & Favicon</h2>
+  <div class="favs">
+    <div class="fav"><svg width="128" height="128" style="color:#0b1620"><use href="#mark"/></svg><span class="mono">128 px</span></div>
+    <div class="fav"><svg width="64" height="64" style="color:#0b1620"><use href="#mark"/></svg><span class="mono">64 px</span></div>
+    <div class="fav"><svg width="32" height="32" style="color:#0b1620"><use href="#mark"/></svg><span class="mono">32 px</span></div>
+    <div class="fav"><img src="logo/favicon-16.png" width="16" height="16" alt="Favicon 16" style="image-rendering:pixelated"><span class="mono">16 px · PNG</span></div>
+    <div class="fav"><img src="logo/favicon-16.png" width="32" height="32" alt="Favicon 16 scaled" style="image-rendering:pixelated"><span class="mono">16 px (2× Ansicht)</span></div>
+  </div>
+
+  <!-- ============ FAVICON / BROWSER TAB ============ -->
+  <h2>Favicon · Browser-Tab</h2>
+  <div class="mock">
+    <div style="background:#dcdfd8;padding:10px 14px 0;display:flex;align-items:flex-end;gap:8px">
+      <!-- Active tab with favicon -->
+      <div style="background:#fff;border-radius:8px 8px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px;
+                  font-size:12px;color:#0b1620;max-width:240px">
+        <img src="logo/favicon-16.png" width="16" height="16" alt="" style="image-rendering:auto">
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">PegelBoard · Lagebild</span>
+        <span style="color:#9aa1a8;font-size:13px;margin-left:6px">×</span>
+      </div>
+      <!-- Inactive tabs -->
+      <div style="background:#cdd1cb;border-radius:8px 8px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#3b4751;max-width:200px">
+        <div style="width:16px;height:16px;border-radius:3px;background:#94a0ac"></div>
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">PEGELONLINE</span>
+      </div>
+      <div style="background:#cdd1cb;border-radius:8px 8px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#3b4751;max-width:200px">
+        <div style="width:16px;height:16px;border-radius:3px;background:#94a0ac"></div>
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">DWD OpenData</span>
+      </div>
+      <div style="background:#cdd1cb;border-radius:8px 8px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#3b4751;max-width:200px">
+        <div style="width:16px;height:16px;border-radius:3px;background:#94a0ac"></div>
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">NINA Warnungen</span>
+      </div>
+    </div>
+    <div class="browser-bar" style="border-top:0">
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="url">http://pegelboard.local</div>
+    </div>
+    <div style="padding:32px;background:#fff;display:flex;align-items:center;gap:48px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="background:#0b1620;border-radius:14px;padding:14px">
+          <img src="logo/favicon-light.svg" width="48" height="48" alt="Favicon dark bg">
+        </div>
+        <span class="mono">favicon-light.svg<br>auf dunkel</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px">
+          <img src="logo/favicon-dark.svg" width="48" height="48" alt="Favicon light bg">
+        </div>
+        <span class="mono">favicon-dark.svg<br>auf hell</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <img src="logo/apple-touch-icon.png" width="80" height="80" style="border-radius:18px" alt="Apple touch icon">
+        <span class="mono">apple-touch-icon.png<br>180 × 180 (iOS)</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <img src="logo/android-chrome-192.png" width="80" height="80" style="border-radius:18px" alt="Android icon">
+        <span class="mono">android-chrome-192.png<br>PWA / Android</span>
+      </div>
+    </div>
+    <div style="background:#0b1620;color:#cde4f5;padding:22px 28px;font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.7;overflow-x:auto">
+      <div style="color:#7a8a99;margin-bottom:8px">&lt;!-- in index.html &lt;head&gt; --&gt;</div>
+      &lt;link rel="icon" type="image/svg+xml" href="/logo/favicon.svg"&gt;<br>
+      &lt;link rel="icon" type="image/png" sizes="32x32" href="/logo/favicon-32.png"&gt;<br>
+      &lt;link rel="icon" type="image/png" sizes="16x16" href="/logo/favicon-16.png"&gt;<br>
+      &lt;link rel="apple-touch-icon" sizes="180x180" href="/logo/apple-touch-icon.png"&gt;<br>
+      &lt;link rel="manifest" href="/logo/site.webmanifest"&gt;<br>
+      &lt;meta name="theme-color" content="#0B1620"&gt;
+    </div>
+  </div>
+
+  <!-- ============ GITHUB AVATAR ============ -->
+  <h2>GitHub · Organisations- &amp; Repo-Avatar</h2>
+  <div class="grid-2">
+    <!-- GitHub profile mock -->
+    <div class="mock" style="padding:0">
+      <div style="background:#0d1117;color:#c9d1d9;padding:24px;display:flex;flex-direction:column;gap:14px;
+                  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">
+        <img src="logo/github-avatar.png" alt="GitHub avatar"
+             style="width:240px;height:240px;border-radius:50%;border:1px solid #30363d;align-self:flex-start">
+        <div style="font-size:24px;font-weight:600;color:#f0f6fc">PegelBoard</div>
+        <div style="font-size:14px;color:#7d8590;line-height:1.5">
+          Einsatzmonitor für Wasserrettungseinheiten · Pegelstände, Warnungen, Karten – auf einen Blick.
+        </div>
+        <div style="display:flex;gap:14px;font-size:12px;color:#7d8590;margin-top:4px">
+          <span>👥 0 followers · 0 following</span>
+        </div>
+        <button style="background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;
+                       padding:6px 14px;font-size:13px;width:fit-content;cursor:default">
+          Follow
+        </button>
+      </div>
+    </div>
+    <!-- Repo header mock -->
+    <div class="mock" style="padding:0">
+      <div style="background:#0d1117;color:#c9d1d9;padding:24px;display:flex;flex-direction:column;gap:14px;
+                  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">
+        <div style="display:flex;align-items:center;gap:10px;font-size:18px">
+          <img src="logo/github-avatar.png" alt="" style="width:28px;height:28px;border-radius:50%">
+          <span style="color:#2f81f7">pegelboard</span>
+          <span style="color:#7d8590">/</span>
+          <span style="color:#2f81f7;font-weight:600">pegelboard</span>
+          <span style="font-size:11px;border:1px solid #30363d;border-radius:10px;padding:1px 8px;color:#7d8590;margin-left:6px">Public</span>
+        </div>
+        <div style="font-size:14px;color:#7d8590;line-height:1.5;border-top:1px solid #21262d;padding-top:14px">
+          🌊 Alle einsatzrelevanten Wasserinformationen – auf einen Blick, in Echtzeit, offline-resilient.
+        </div>
+        <div style="display:flex;gap:10px;font-size:12px;color:#7d8590;flex-wrap:wrap;margin-top:4px">
+          <span style="background:#21262d;border-radius:20px;padding:2px 10px">water-rescue</span>
+          <span style="background:#21262d;border-radius:20px;padding:2px 10px">raspberry-pi</span>
+          <span style="background:#21262d;border-radius:20px;padding:2px 10px">dashboard</span>
+          <span style="background:#21262d;border-radius:20px;padding:2px 10px">pegelonline</span>
+        </div>
+        <div style="display:flex;gap:14px;font-size:12px;color:#7d8590;margin-top:6px">
+          ⭐ 0 · 🍴 0 · ⚖ GPL-3.0
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:20px">
+    <div class="panel">
+      <span class="label">Standard · dunkel</span>
+      <img src="logo/github-avatar.png" alt="GitHub avatar"
+           style="width:200px;height:200px;border-radius:50%">
+      <span class="mono">github-avatar.png · 460² · 1024²</span>
+    </div>
+    <div class="panel">
+      <span class="label">Alternativ · hell</span>
+      <img src="logo/github-avatar-light.png" alt="GitHub avatar light"
+           style="width:200px;height:200px;border-radius:50%;border:1px solid var(--line)">
+      <span class="mono">github-avatar-light.png</span>
+    </div>
+    <div class="panel">
+      <span class="label">Quadratisch (nicht-cropped)</span>
+      <img src="logo/github-avatar.png" alt="GitHub avatar square"
+           style="width:200px;height:200px;border-radius:8px">
+      <span class="mono">für README · Docs</span>
+    </div>
+  </div>
+
+  <div class="note" style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.55;max-width:780px">
+    <b>Safe-Area:</b> GitHub croppt Avatare zum Kreis. Die Marke sitzt innerhalb der inneren 80 %-Sicherheitszone,
+    daher bleibt sie auch bei runder Darstellung vollständig sichtbar. Bei Skalierung &lt; 40 px (Kommentare, Notifications)
+    bleibt durch den hohen Kontrast der Welle die Erkennbarkeit erhalten.
+  </div>
+
+  <!-- ============ FARBEN ============ -->
+  <h2>Farbsystem</h2>
+  <div class="grid-4">
+    <div class="swatch" style="background:#0b1620;color:#fff;border-color:#0b1620">
+      <div class="name">Tinte</div>
+      <div class="hex">#0B1620</div>
+    </div>
+    <div class="swatch" style="background:#ffffff;color:#0b1620;border-color:var(--line)">
+      <div class="name">Papier</div>
+      <div class="hex">#FFFFFF</div>
+    </div>
+    <div class="swatch" style="background:#0a6cb0;color:#fff;border-color:#0a6cb0">
+      <div class="name">Signalblau · Akzent</div>
+      <div class="hex">#0A6CB0</div>
+    </div>
+    <div class="swatch" style="background:#3aa0d8;color:#0b1620;border-color:#3aa0d8">
+      <div class="name">Blau hell · Dark-Mode</div>
+      <div class="hex">#3AA0D8</div>
+    </div>
+  </div>
+  <div class="grid-4" style="margin-top:20px">
+    <div class="swatch" style="background:#22c55e;color:#fff;border-color:#22c55e">
+      <div class="name">Normal</div>
+      <div class="hex">#22C55E</div>
+    </div>
+    <div class="swatch" style="background:#FFD200;color:#0b1620;border-color:#FFD200">
+      <div class="name">Erhöht</div>
+      <div class="hex">#FFD200</div>
+    </div>
+    <div class="swatch" style="background:#f08a24;color:#0b1620;border-color:#f08a24">
+      <div class="name">Kritisch</div>
+      <div class="hex">#F08A24</div>
+    </div>
+    <div class="swatch" style="background:#E30613;color:#fff;border-color:#E30613">
+      <div class="name">Einsatz</div>
+      <div class="hex">#E30613</div>
+    </div>
+  </div>
+
+  <!-- ============ ANWENDUNG: APP HEADER ============ -->
+  <h2>In Anwendung · App-Header</h2>
+  <div class="mock">
+    <div class="browser-bar">
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="url">http://pegelboard.local</div>
+    </div>
+    <div class="app-header">
+      <div class="brand">
+        <svg width="36" height="36" style="color:#3aa0d8"><use href="#mark"/></svg>
+        <div class="name">Pegel<span>Board</span></div>
+      </div>
+      <div class="status">
+        <span class="live"></span> Live · 08:42:17 &nbsp;·&nbsp; 🌅 05:14 &nbsp; 🌇 20:51
+      </div>
+    </div>
+    <div class="app-body">[ Lagebild · Pegel · Karte · Warnungen ]</div>
+  </div>
+
+  <!-- ============ ANWENDUNG: SPLASH ============ -->
+  <h2>In Anwendung · Boot-Splash (Pi Kiosk)</h2>
+  <div class="mock">
+    <div class="splash">
+      <svg width="120" height="120" style="color:#3aa0d8"><use href="#mark"/></svg>
+      <div class="name">Pegel<span>Board</span></div>
+      <div class="tagline">Einsatzmonitor wird geladen …</div>
+    </div>
+  </div>
+
+  <!-- ============ SCHUTZRAUM ============ -->
+  <h2>Schutzraum & Mindestgröße</h2>
+  <div class="spec">
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;
+                background:#fff;border:1px dashed #b8c0c8;border-radius:8px;aspect-ratio:1">
+      <!-- Mark with surrounding clear-space markers -->
+      <svg width="64" height="64" style="color:#0b1620"><use href="#mark"/></svg>
+      <!-- Schutzraum-Indikator -->
+      <div style="position:absolute;inset:14px;border:1px dotted #cdd6df;border-radius:6px"></div>
+      <div class="mono" style="position:absolute;top:4px;left:8px">x</div>
+      <div class="mono" style="position:absolute;bottom:4px;right:8px">x = ¼ Markhöhe</div>
+    </div>
+    <ul>
+      <li><b>Schutzraum</b><span>Umliegende Fläche von mindestens ¼ Markhöhe in alle Richtungen freihalten.</span></li>
+      <li><b>Mindestgröße</b><span>Mark allein: 16 px / 5 mm. Mit Wortmarke: 24 px Markhöhe / 8 mm.</span></li>
+      <li><b>Strichstärke</b><span>Fix relativ zur 64-Einheiten-Box. Niemals neu zeichnen oder „dünner stellen".</span></li>
+      <li><b>Hintergrund</b><span>Hauptanwendung auf #FFFFFF oder #0B1620. Farbige Flächen nur als Vollton-Akzent.</span></li>
+    </ul>
+  </div>
+
+  <!-- ============ DO NOT ============ -->
+  <h2>Don'ts</h2>
+  <div class="donts">
+    <div class="dont">
+      <span class="x">✕</span>
+      <svg width="80" height="80" viewBox="0 0 64 64" style="color:#0b1620">
+        <use href="#mark" transform="rotate(15 32 32)"/>
+      </svg>
+      <div class="cap">Niemals rotieren.</div>
+    </div>
+    <div class="dont">
+      <span class="x">✕</span>
+      <svg width="80" height="80" viewBox="0 0 64 64" preserveAspectRatio="none" style="color:#0b1620;width:110px">
+        <use href="#mark"/>
+      </svg>
+      <div class="cap">Nicht verzerren oder strecken.</div>
+    </div>
+    <div class="dont">
+      <span class="x">✕</span>
+      <div style="background:linear-gradient(135deg,#0a6cb0,#E30613);padding:12px;border-radius:8px">
+        <svg width="60" height="60" style="color:#fff"><use href="#mark"/></svg>
+      </div>
+      <div class="cap">Keine Verläufe oder Mehrfarb­anwendungen.</div>
+    </div>
+    <div class="dont">
+      <span class="ok">✓</span>
+      <svg width="80" height="80" style="color:#0b1620"><use href="#mark"/></svg>
+      <div class="cap">Klar, monochrom, in Originalproportion.</div>
+    </div>
+  </div>
+
+  <!-- ============ MARKENRECHT ============ -->
+  <h2>Markenrechtliche Einschätzung</h2>
+  <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px;display:flex;flex-direction:column;gap:18px">
+    <p style="margin:0;font-size:14px;line-height:1.6;max-width:780px">
+      <b>Kurzfassung:</b> Eine schnelle Vorabprüfung zeigt keinen offensichtlichen Konflikt – weder bei Name noch beim Bildzeichen. Eine verbindliche Aussage ist das nicht; vor einer kommerziellen Eintragung sollte eine professionelle Markenrecherche erfolgen.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:6px">
+      <div style="border:1px solid var(--line);border-radius:10px;padding:18px">
+        <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Wortmarke „PegelBoard"</div>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.55;color:var(--fg)">
+          <li>Kein identischer Treffer im DPMA/EUIPO bei der Stichproben­suche.</li>
+          <li>Klanglich nahe: <i>Pegboard Software</i> (AU, B2B-Integrationen) und <i>Productboard</i> (US, PM-Tool) – jeweils andere Branche und Zielmarkt.</li>
+          <li>Beschreibend ähnliche Apps: <i>Meine Pegel</i> (Umweltministerium BW) und <i>PEGELONLINE</i> – beides öffentlich-rechtlich, andere Markenform.</li>
+          <li>Risiko in Nizza-Klasse 9 (Software) &amp; 42 (IT-Dienstleistungen) erscheint gering, aber nicht null.</li>
+        </ul>
+      </div>
+
+      <div style="border:1px solid var(--line);border-radius:10px;padding:18px">
+        <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Bildmarke „Welle + 3 Balken"</div>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.55;color:var(--fg)">
+          <li>Drei steigende Balken sind ein universelles Symbol (Mobilfunk-Signal, Diagramm) – als solche <b>nicht monopolisierbar</b>.</li>
+          <li>Die <b>Kombination</b> Welle ⌒ über drei Balken ist nicht gängig; eine schnelle Bildersuche zeigt keine direkt verwechselbare Marke.</li>
+          <li>Visuell entfernt verwandt: Verizon-„Check", verschiedene Analytics-Icons, RainViewer-Logo. Alle unterscheiden sich in Proportion, Farbe und Komposition deutlich.</li>
+          <li>Keine Anlehnung an DLRG, Wasserwacht, THW oder andere geschützte Hoheits-/Vereinszeichen – das war Designziel.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:#fff8d6;border:1px solid #f0d35a;border-radius:10px;padding:16px 20px;font-size:13px;line-height:1.55;color:#5a4a00">
+      <b>Empfohlene Schritte vor kommerziellem Einsatz oder Markenanmeldung:</b>
+      <ol style="margin:8px 0 0 18px;padding:0">
+        <li>Identitätssuche im <span class="mono">DPMAregister</span> (Klassen 9 &amp; 42) – kostenlos.</li>
+        <li>EUIPO eSearch plus für EU-weite Marken.</li>
+        <li>Bildmarkenrecherche über die Wiener Klassifikation (Code 1.15 Wasser, 17.2 Säulen/Balken).</li>
+        <li>Bei Anmeldung: Fachanwalt Markenrecht oder Online-Service (z.B. dpma-markenrecherche.de) zur Ähnlichkeitsanalyse.</li>
+      </ol>
+    </div>
+
+    <p style="margin:0;font-size:11px;color:var(--muted);line-height:1.5">
+      Diese Einschätzung beruht auf einer Web-Stichprobe und ersetzt keine juristische Beratung. Da das Projekt unter <b>GPL&nbsp;v3</b> als Open-Source veröffentlicht ist, ist eine Markenanmeldung optional – die freie Nutzung, Modifikation und Weitergabe des Codes ist davon unabhängig. Eine eingetragene <i>Wort-/Bildmarke</i> würde lediglich den <b>Namen und das Logo</b> vor Trittbrettfahrern schützen, während Source-Code, Funktion und Idee weiterhin GPL-frei bleiben (Markenrecht und Urheber-/Lizenzrecht sind unabhängige Schichten).
+    </p>
+  </div>
+
+  <!-- ============ DATEIEN ============ -->
+  <h2>Exportierte Dateien · /logo/</h2>
+  <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;display:grid;grid-template-columns:repeat(2,1fr);gap:32px">
+    <div>
+      <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Marke &amp; Wortmarke</div>
+      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;
+                 font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--fg)">
+        <li>pegelboard-mark-black.svg</li>
+        <li>pegelboard-mark-white.svg</li>
+        <li>pegelboard-mark-blue.svg</li>
+        <li>pegelboard-icon-blue-bg.svg</li>
+        <li>pegelboard-icon-dark-bg.svg</li>
+        <li>pegelboard-wordmark-light.svg</li>
+        <li>pegelboard-wordmark-dark.svg</li>
+        <li>pegelboard-wordmark-mono.svg</li>
+      </ul>
+    </div>
+    <div>
+      <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Favicon, App-Icons &amp; GitHub</div>
+      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;
+                 font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--fg)">
+        <li>favicon.svg <span style="color:var(--muted)">· auto light/dark</span></li>
+        <li>favicon-dark.svg · favicon-light.svg</li>
+        <li>favicon-16.png · favicon-32.png · favicon-48.png</li>
+        <li>apple-touch-icon.svg / .png <span style="color:var(--muted)">· 180²</span></li>
+        <li>android-chrome-192.png · android-chrome-512.png</li>
+        <li style="margin-top:10px;color:var(--muted)">GitHub-Avatare</li>
+        <li>github-avatar.svg / .png <span style="color:var(--muted)">· 460²</span></li>
+        <li>github-avatar-1024.png <span style="color:var(--muted)">· Druckqualität</span></li>
+        <li>github-avatar-light.svg / .png</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div>PegelBoard CI · v2 · finale Marke</div>
+    <div class="mono">SVG · 64-Unit-Grid · einfarbig</div>
+  </footer>
+
+</div>
+</body>
+</html>

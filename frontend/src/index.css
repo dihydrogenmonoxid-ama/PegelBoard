@@ -1,0 +1,120 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
+
+/* ── Design Tokens ─────────────────────────────────── */
+:root {
+  /* PegelBoard CI colors */
+  --color-pb-ink: #0b1620;
+  --color-pb-signal: #0a6cb0;
+  --color-pb-blue-light: #3aa0d8;
+  --color-pb-light-bg: #f5f6f4;
+
+  /* Warn colors – overridable from admin config at runtime */
+  --color-warn-normal: #22c55e;
+  --color-warn-elevated: #fbbf24;
+  --color-warn-critical: #f08a24;
+  --color-warn-alarm: #E30613;
+
+  /* Dark mode (default) */
+  --theme-bg: #0b1620;
+  --theme-bg-gradient: radial-gradient(ellipse at 20% 0%, #0e2030 0%, #0b1620 60%);
+  --theme-card: rgba(11, 28, 46, 0.78);
+  --theme-border: rgba(255, 255, 255, 0.07);
+  --theme-text: #f5f6f4;
+  --theme-text-muted: #9fb4c6;
+  --theme-text-faint: #7a8a99;
+  --theme-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --theme-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] {
+  --theme-bg: #f5f6f4;
+  --theme-bg-gradient: radial-gradient(ellipse at 20% 0%, #e8eef5 0%, #f5f6f4 60%);
+  --theme-card: rgba(255, 255, 255, 0.88);
+  --theme-border: rgba(0, 0, 0, 0.09);
+  --theme-text: #0b1620;
+  --theme-text-muted: rgba(11, 22, 32, 0.55);
+  --theme-text-faint: rgba(11, 22, 32, 0.30);
+  --theme-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  --theme-inset: inset 0 1px 0 rgba(255, 255, 255, 0.60);
+}
+
+@theme {
+  --color-pb-ink: #0b1620;
+  --color-pb-signal: #0a6cb0;
+  --color-pb-blue-light: #3aa0d8;
+  --color-pb-light-bg: #f5f6f4;
+  --color-warn-normal: var(--color-warn-normal);
+  --color-warn-elevated: var(--color-warn-elevated);
+  --color-warn-critical: var(--color-warn-critical);
+  --color-warn-alarm: var(--color-warn-alarm);
+}
+
+/* ── Base ──────────────────────────────────────────── */
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--theme-bg);
+  background-image: var(--theme-bg-gradient);
+  color: var(--theme-text);
+  font-family: Helvetica, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ── Glass card ────────────────────────────────────── */
+.glass {
+  background: var(--theme-card);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  border: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow), var(--theme-inset);
+}
+
+/* ── Text helpers that respect theme ───────────────── */
+.text-theme { color: var(--theme-text); }
+.text-theme-muted { color: var(--theme-text-muted); }
+.text-theme-faint { color: var(--theme-text-faint); }
+
+[data-theme="light"] .text-white { color: var(--theme-text) !important; }
+[data-theme="light"] .text-white\/40 { color: var(--theme-text-muted) !important; }
+[data-theme="light"] .text-white\/30 { color: var(--theme-text-faint) !important; }
+[data-theme="light"] .text-white\/20 { color: var(--theme-text-faint) !important; }
+[data-theme="light"] .text-white\/60 { color: rgba(11, 22, 32, 0.70) !important; }
+[data-theme="light"] .border-white\/5 { border-color: var(--theme-border) !important; }
+[data-theme="light"] .border-white\/10 { border-color: rgba(0,0,0,0.12) !important; }
+[data-theme="light"] .bg-white\/5 { background: rgba(0,0,0,0.04) !important; }
+[data-theme="light"] .bg-white\/10 { background: rgba(0,0,0,0.07) !important; }
+
+/* Active admin nav item has dark-blue bg → keep text white in both themes */
+.bg-pb-signal.text-white { color: #fff !important; }
+
+/* ── Animations ────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.6); opacity: 0.5; }
+}
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+@keyframes news-scroll {
+  from { transform: translateX(100vw); }
+  to   { transform: translateX(-100%); }
+}
+.animate-news-scroll { animation: news-scroll 45s linear infinite; }
+
+/* ── Leaflet ───────────────────────────────────────── */
+.leaflet-container { background: #0d1f3c; }
+.leaflet-control-attribution { font-size: 9px !important; opacity: 0.4; }
+
+/* ── React Grid Layout: remove default box-shadow ──── */
+.react-grid-item.react-grid-placeholder { background: rgba(255, 210, 0, 0.15); border-radius: 12px; }
+
+/* ── Alarm pulsing border (Framer Motion handles this in JS) ── */
+@keyframes alarm-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227, 6, 19, 0); }
+  50%       { box-shadow: 0 0 0 8px rgba(227, 6, 19, 0.4); }
+}
+.alarm-pulse { animation: alarm-pulse 1.5s ease-in-out infinite; }
+
+/* ── Day/Night smooth transition ────────────────────── */
+html { transition: background-color 2s ease, color 2s ease; }

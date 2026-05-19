@@ -1,0 +1,21 @@
+# Vite build output
+dist/
+dist-ssr/
+
+# Next.js leftover (not used)
+.next/
+
+# Dependencies
+node_modules/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+.DS_Store
+npm-debug.log*

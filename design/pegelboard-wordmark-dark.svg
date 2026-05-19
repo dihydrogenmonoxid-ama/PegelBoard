@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="720" height="160">
+<rect width="360" height="80" fill="#0b1620"></rect>
+<g color="#3aa0d8">
+  <svg x="8" y="8" viewBox="0 0 64 64" width="64" height="64">
+  <path d="M4 22 Q 14 12 24 22 T 44 22 T 64 22" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+  <g fill="currentColor">
+    <rect x="10" y="42" width="9" height="14" rx="2"></rect>
+    <rect x="27.5" y="36" width="9" height="20" rx="2"></rect>
+    <rect x="45" y="30" width="9" height="26" rx="2"></rect>
+  </g>
+</svg>
+</g>
+<text x="88" y="50" font-family="Helvetica, &#39;Helvetica Neue&#39;, Arial, sans-serif" font-size="34" font-weight="600" fill="#f5f6f4" letter-spacing="-0.5">Pegel<tspan font-weight="300" fill="#9fb4c6">Board</tspan></text>
+</svg>
