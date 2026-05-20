@@ -61,6 +61,7 @@ interface Props {
   helicopters?: Helicopter[];
   openskyEnabled?: boolean;
   slipwaysEnabled?: boolean;
+  radarEnabled?: boolean;
   mapStyle?: MapStyle;
 }
 
@@ -82,7 +83,7 @@ const LEGEND_ITEMS = [
   { color: 'var(--color-warn-alarm)',    label: 'Alarm' },
 ];
 
-function MapLegend({ slipwaysEnabled }: { slipwaysEnabled: boolean }) {
+function MapLegend({ slipwaysEnabled, radarEnabled }: { slipwaysEnabled: boolean; radarEnabled: boolean }) {
   return (
     <div
       style={{
@@ -115,18 +116,27 @@ function MapLegend({ slipwaysEnabled }: { slipwaysEnabled: boolean }) {
           <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)', lineHeight: 1 }}>{label}</span>
         </div>
       ))}
-      {slipwaysEnabled && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', paddingTop: '4px', borderTop: '1px solid var(--theme-border)' }}>
-          <span style={{
-            display: 'inline-block',
-            width: '10px',
-            height: '10px',
-            borderRadius: '50%',
-            background: '#06b6d4',
-            border: '1.5px solid rgba(255,255,255,0.6)',
-            flexShrink: 0,
-          }} />
-          <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)', lineHeight: 1 }}>Slippstelle</span>
+      {(slipwaysEnabled || radarEnabled) && (
+        <div style={{ marginTop: '2px', paddingTop: '4px', borderTop: '1px solid var(--theme-border)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {slipwaysEnabled && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{
+                display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%',
+                background: '#06b6d4', border: '1.5px solid rgba(255,255,255,0.6)', flexShrink: 0,
+              }} />
+              <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)', lineHeight: 1 }}>Slippstelle</span>
+            </div>
+          )}
+          {radarEnabled && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{
+                display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px',
+                background: 'linear-gradient(135deg,#00bcd4,#2196f3,#f44336)',
+                border: '1px solid rgba(255,255,255,0.4)', flexShrink: 0,
+              }} />
+              <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)', lineHeight: 1 }}>Regenradar (DWD)</span>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -141,6 +151,7 @@ export default function MapWidget({
   helicopters = [],
   openskyEnabled = false,
   slipwaysEnabled = false,
+  radarEnabled = false,
   mapStyle = 'dark',
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -250,14 +261,14 @@ export default function MapWidget({
           <p className="text-sm" style={{ color: 'var(--theme-text-faint)' }}>Keine Stationen konfiguriert</p>
         </div>
       )}
-      {/* Rain radar toggle button + layer */}
-      <RainRadarLayer map={mapRef.current} />
-      {/* Slipway toggle button + layer */}
+      {/* Regenradar (DWD WMS, Backend-gesteuert) */}
+      {radarEnabled && <RainRadarLayer map={mapRef.current} />}
+      {/* Slipway layer (Backend-gesteuert) */}
       {slipwaysEnabled && <SlipwayLayer map={mapRef.current} />}
       {/* Helicopter layer */}
       {openskyEnabled && <HelicopterLayer map={mapRef.current} helicopters={helicopters} />}
       {/* Map legend */}
-      <MapLegend slipwaysEnabled={slipwaysEnabled} />
+      <MapLegend slipwaysEnabled={slipwaysEnabled} radarEnabled={radarEnabled} />
     </div>
   );
 }

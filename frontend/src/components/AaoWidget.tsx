@@ -6,7 +6,11 @@ interface AaoStichwort { id: string; label: string; mittel: AaoMittel[] }
 interface AaoConfig { stichwoerter: AaoStichwort[] }
 interface Einsatzmittel { id: number; name: string; klarname: string | null; typ: string | null; has_icon: boolean }
 
-export default function AaoWidget() {
+interface Props {
+  nameMode?: 'klarname' | 'name';
+}
+
+export default function AaoWidget({ nameMode = 'klarname' }: Props) {
   const [config, setConfig] = useState<AaoConfig | null>(null);
   const [resources, setResources] = useState<Map<number, Einsatzmittel>>(new Map());
 
@@ -19,6 +23,11 @@ export default function AaoWidget() {
 
   const stichwoerter = config?.stichwoerter ?? [];
   if (stichwoerter.length === 0) return null;
+
+  function displayName(e: Einsatzmittel): string {
+    if (nameMode === 'name') return e.name;
+    return e.klarname ?? e.name;
+  }
 
   return (
     <div className="glass rounded-2xl flex-shrink-0 overflow-y-auto" style={{ maxHeight: '40%' }}>
@@ -41,15 +50,27 @@ export default function AaoWidget() {
               ) : (
                 <div className="flex flex-wrap gap-1.5">
                   {mittelList.map((e) => (
-                    <div
-                      key={e.id}
-                      className="flex items-center gap-1.5 text-sm rounded-lg px-2.5 py-1"
-                      style={{ background: 'var(--theme-bg)', border: '1px solid var(--theme-border)', color: 'var(--theme-text)' }}
-                    >
+                    <div key={e.id} className="flex items-center gap-1.5">
                       {e.has_icon && (
-                        <img src={`/api/einsatzmittel/${e.id}/icon`} alt="" className="w-5 h-5 object-contain" />
+                        // Icon ohne Hintergrund → Alpha-Kanal wirkt gegen den Glass-Card-Hintergrund
+                        <img
+                          src={`/api/einsatzmittel/${e.id}/icon`}
+                          alt=""
+                          className="w-8 h-8 object-contain flex-shrink-0"
+                          style={{ imageRendering: 'auto' }}
+                        />
                       )}
-                      {e.klarname ?? e.name}
+                      <span
+                        className="text-sm rounded-lg px-2.5 py-1"
+                        style={{
+                          background: 'var(--theme-bg)',
+                          border: '1px solid var(--theme-border)',
+                          color: 'var(--theme-text)',
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {displayName(e)}
+                      </span>
                     </div>
                   ))}
                 </div>

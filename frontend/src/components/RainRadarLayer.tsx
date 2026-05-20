@@ -1,92 +1,54 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Map as LeafletMap } from 'leaflet';
 import L from 'leaflet';
 
-interface RainViewerData {
-  radar: {
-    past: Array<{ time: number; path: string }>;
-    nowcast?: Array<{ time: number; path: string }>;
-  };
-}
+// DWD GeoServer WMS – CORS: Access-Control-Allow-Origin: * bestätigt
+// Layer "dwd:Niederschlagsradar" wird alle 5 min vom DWD aktualisiert.
+// WMS verwendet BBOX-basierte Anfragen statt Zoom-Kacheln → kein
+// "Zoom Level not supported"-Problem bei näherer Zoomstufe.
+const DWD_WMS_URL = 'https://maps.dwd.de/geoserver/dwd/wms';
+const REFRESH_MS = 5 * 60 * 1000; // 5 min
 
 interface Props {
   map: LeafletMap | null;
 }
 
 export default function RainRadarLayer({ map }: Props) {
-  const [enabled, setEnabled] = useState(false);
-  const layerRef = useRef<L.TileLayer | null>(null);
+  const layerRef = useRef<L.TileLayer.WMS | null>(null);
 
   useEffect(() => {
-    if (!map || !enabled) {
+    if (!map) return;
+
+    function addLayer() {
       if (layerRef.current) {
         layerRef.current.remove();
         layerRef.current = null;
       }
-      return;
+      layerRef.current = L.tileLayer.wms(DWD_WMS_URL, {
+        layers: 'dwd:Niederschlagsradar',
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.65,
+        attribution: '© <a href="https://www.dwd.de">Deutscher Wetterdienst</a>',
+        version: '1.1.1',
+        zIndex: 10,
+        updateWhenIdle: false,
+        // Zeitstempel verhindert Browser-Caching des alten Radars
+        // @ts-expect-error: DWD WMS TIME-Parameter als custom option
+        TIME: new Date(Math.floor(Date.now() / REFRESH_MS) * REFRESH_MS).toISOString(),
+      });
+      if (map) layerRef.current.addTo(map);
     }
 
-    let cancelled = false;
-    fetch('https://api.rainviewer.com/public/weather-maps.json')
-      .then((r) => r.json())
-      .then((data: RainViewerData) => {
-        if (cancelled) return;
-        const frames = data.radar.past;
-        if (!frames || frames.length === 0) return;
-        const latest = frames[frames.length - 1];
-        const url = `https://tilecache.rainviewer.com${latest.path}/256/{z}/{x}/{y}/2/1_1.png`;
+    addLayer();
+    const t = setInterval(addLayer, REFRESH_MS);
 
-        if (layerRef.current) layerRef.current.remove();
-        const layer = L.tileLayer(url, {
-          opacity: 0.5,
-          attribution: 'RainViewer',
-          zIndex: 10,
-          maxNativeZoom: 12,
-          maxZoom: 19,
-        });
-        // Hard-clamp z to 12 regardless of Leaflet internals — RainViewer
-        // returns "Zoom Level not supported" for z > 12 on the tile CDN.
-        const origGetTileUrl = layer.getTileUrl.bind(layer);
-        (layer as unknown as { getTileUrl: (c: L.Coords) => string }).getTileUrl =
-          (coords: L.Coords) => origGetTileUrl(Object.assign(Object.create(coords), { z: Math.min(coords.z, 12) }) as L.Coords);
-        layerRef.current = layer;
-        layerRef.current.addTo(map);
-      })
-      .catch(() => {});
-
-    return () => { cancelled = true; };
-  }, [map, enabled]);
-
-  // Cleanup on unmount
-  useEffect(() => {
     return () => {
-      if (layerRef.current) {
-        layerRef.current.remove();
-        layerRef.current = null;
-      }
+      clearInterval(t);
+      layerRef.current?.remove();
+      layerRef.current = null;
     };
-  }, []);
+  }, [map]);
 
-  return (
-    <button
-      onClick={() => setEnabled((e) => !e)}
-      title={enabled ? 'Regenradar ausblenden' : 'Regenradar einblenden'}
-      style={{
-        position: 'absolute',
-        bottom: '90px',
-        right: '10px',
-        zIndex: 1000,
-        background: enabled ? 'var(--color-pb-signal)' : 'var(--theme-card)',
-        border: '1px solid var(--theme-border)',
-        borderRadius: '6px',
-        padding: '4px 8px',
-        fontSize: '14px',
-        cursor: 'pointer',
-        color: enabled ? '#fff' : 'var(--theme-text-muted)',
-        backdropFilter: 'blur(8px)',
-      }}
-    >
-      🌧️
-    </button>
-  );
+  return null;
 }

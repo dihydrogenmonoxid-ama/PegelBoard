@@ -290,11 +290,24 @@ export default function ConfigPage() {
             </select>
           </label>
 
+          {/* Regenradar */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wider">Regenradar anzeigen</p>
+              <p className="text-xs text-white/30 mt-0.5">DWD Niederschlagsradar als WMS-Overlay (kein API-Key nötig)</p>
+            </div>
+            <button type="button"
+              onClick={() => set('radar_enabled', values['radar_enabled'] === 'true' ? 'false' : 'true')}
+              className={`relative w-11 h-6 rounded-full transition-colors ${values['radar_enabled'] === 'true' ? 'bg-pb-signal' : 'bg-white/10'}`}>
+              <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${values['radar_enabled'] === 'true' ? 'left-6' : 'left-1'}`} />
+            </button>
+          </div>
+
           {/* Slippstellen */}
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-white/60 uppercase tracking-wider">Slippstellen anzeigen</p>
-              <p className="text-xs text-white/30 mt-0.5">Bootsrampen aus OSM via Overpass (⚓-Knopf auf der Karte)</p>
+              <p className="text-xs text-white/30 mt-0.5">Bootsrampen aus OSM via Overpass</p>
             </div>
             <button type="button"
               onClick={() => set('slipways_enabled', values['slipways_enabled'] === 'true' ? 'false' : 'true')}
@@ -302,6 +315,25 @@ export default function ConfigPage() {
               <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${values['slipways_enabled'] === 'true' ? 'left-6' : 'left-1'}`} />
             </button>
           </div>
+
+          {/* AAO-Position */}
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-white/60 uppercase tracking-wider">AAO-Position</span>
+            <select className={inputCls} value={values['aao_position'] ?? 'right'} onChange={(e) => set('aao_position', e.target.value)}>
+              <option value="right">Rechts (unter Wetter & Vorhersage)</option>
+              <option value="left">Links (unter Pegelstände)</option>
+            </select>
+          </label>
+
+          {/* Einsatzmittel-Namensanzeige */}
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-white/60 uppercase tracking-wider">Einsatzmittel-Bezeichnung</span>
+            <select className={inputCls} value={values['em_name_mode'] ?? 'klarname'} onChange={(e) => set('em_name_mode', e.target.value)}>
+              <option value="klarname">Kurzname / Klarname</option>
+              <option value="name">Vollständiger Funkrufname</option>
+            </select>
+            <span className="text-xs text-white/30">Gilt für AAO-Sektion im Dashboard</span>
+          </label>
 
           {/* Warn colors */}
           <div className="flex flex-col gap-3">

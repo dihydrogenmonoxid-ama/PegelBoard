@@ -25,6 +25,9 @@ interface PublicConfig {
   daynight_mode?: string;
   opensky_enabled?: string;
   slipways_enabled?: string;
+  radar_enabled?: string;
+  aao_position?: string;
+  em_name_mode?: string;
   tagesnachricht?: string;
   map_style?: string;
 }
@@ -101,6 +104,8 @@ export default function Dashboard() {
     : undefined;
 
   const showMap = config.show_map !== 'false';
+  const aaoLeft = config.aao_position === 'left';
+  const nameMode = (config.em_name_mode ?? 'klarname') as 'klarname' | 'name';
 
   return (
     <div
@@ -125,9 +130,12 @@ export default function Dashboard() {
         logo={config.logo_base64}
       />
 
-      {/* Left panel: Gauges */}
-      <div style={{ gridArea: 'left', overflow: 'hidden', minHeight: 0 }}>
-        <GaugeWidget onReadingsChange={handleReadingsChange} liveUpdates={liveUpdates} />
+      {/* Left panel: Gauges (+ AAO wenn aao_position=left) */}
+      <div style={{ gridArea: 'left', overflow: 'hidden', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <GaugeWidget onReadingsChange={handleReadingsChange} liveUpdates={liveUpdates} />
+        </div>
+        {aaoLeft && <AaoWidget nameMode={nameMode} />}
       </div>
 
       {/* Center: Map */}
@@ -141,6 +149,7 @@ export default function Dashboard() {
             helicopters={helicopters}
             openskyEnabled={config.opensky_enabled === 'true'}
             slipwaysEnabled={config.slipways_enabled === 'true'}
+            radarEnabled={config.radar_enabled === 'true'}
             mapStyle={(config.map_style as import('../components/MapWidget').MapStyle) ?? 'dark'}
           />
         ) : (
@@ -151,7 +160,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Right panel: Sonne + Wetter/Vorhersage (gemeinsamer Container) + AAO */}
+      {/* Right panel: Sonne + Wetter/Vorhersage (+ AAO wenn aao_position=right) */}
       <div
         style={{
           gridArea: 'right',
@@ -171,7 +180,7 @@ export default function Dashboard() {
           <div className="border-t mx-3" style={{ borderColor: 'var(--theme-border)' }} />
           <ForecastWidget embedded />
         </div>
-        <AaoWidget />
+        {!aaoLeft && <AaoWidget nameMode={nameMode} />}
       </div>
 
       {/* Bottom bar */}

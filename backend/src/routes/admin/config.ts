@@ -19,6 +19,9 @@ const ALLOWED_KEYS = new Set([
   'daynight_mode',
   'map_style',
   'slipways_enabled',
+  'radar_enabled',
+  'aao_position',
+  'em_name_mode',
   // Warnfarben
   'color_warn_normal',
   'color_warn_elevated',

@@ -19,6 +19,9 @@ const PUBLIC_KEYS = new Set([
   'tagesnachricht',
   'map_style',
   'slipways_enabled',
+  'radar_enabled',
+  'aao_position',
+  'em_name_mode',
 ]);
 
 export async function publicConfigRoutes(fastify: FastifyInstance) {
