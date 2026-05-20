@@ -37,13 +37,19 @@ export default function RainRadarLayer({ map }: Props) {
         const url = `https://tilecache.rainviewer.com${latest.path}/256/{z}/{x}/{y}/2/1_1.png`;
 
         if (layerRef.current) layerRef.current.remove();
-        layerRef.current = L.tileLayer(url, {
+        const layer = L.tileLayer(url, {
           opacity: 0.5,
           attribution: 'RainViewer',
           zIndex: 10,
           maxNativeZoom: 12,
           maxZoom: 19,
         });
+        // Hard-clamp z to 12 regardless of Leaflet internals — RainViewer
+        // returns "Zoom Level not supported" for z > 12 on the tile CDN.
+        const origGetTileUrl = layer.getTileUrl.bind(layer);
+        (layer as unknown as { getTileUrl: (c: L.Coords) => string }).getTileUrl =
+          (coords: L.Coords) => origGetTileUrl(Object.assign(Object.create(coords), { z: Math.min(coords.z, 12) }) as L.Coords);
+        layerRef.current = layer;
         layerRef.current.addTo(map);
       })
       .catch(() => {});

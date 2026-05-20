@@ -229,13 +229,13 @@ function EinsatzmittelSection() {
 }
 
 export default function BottomBar() {
-  const [showNews, setShowNews] = useState(true);
+  const [showNews, setShowNews] = useState(false);
   const [tagesnachricht, setTagesnachricht] = useState('');
 
   useEffect(() => {
     const load = () => {
       api.get<PublicConfig>('/api/config/public').then((cfg) => {
-        setShowNews(cfg.show_news !== 'false');
+        setShowNews(cfg.show_news === 'true');
         setTagesnachricht(cfg.tagesnachricht ?? '');
       }).catch(() => {});
     };

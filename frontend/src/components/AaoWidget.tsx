@@ -21,11 +21,11 @@ export default function AaoWidget() {
   if (stichwoerter.length === 0) return null;
 
   return (
-    <div className="glass rounded-2xl flex-shrink-0 overflow-y-auto" style={{ maxHeight: '35%' }}>
+    <div className="glass rounded-2xl flex-shrink-0 overflow-y-auto" style={{ maxHeight: '40%' }}>
       <div className="px-4 pt-3 pb-2 border-b flex-shrink-0" style={{ borderColor: 'var(--theme-border)' }}>
         <p className="text-xs uppercase tracking-widest" style={{ color: 'var(--theme-text-muted)' }}>AAO</p>
       </div>
-      <div className="px-4 py-2 flex flex-col gap-3">
+      <div className="px-4 py-3 flex flex-col gap-4">
         {stichwoerter.map((s) => {
           const mittelList = s.mittel
             .slice()
@@ -35,19 +35,19 @@ export default function AaoWidget() {
 
           return (
             <div key={s.id}>
-              <p className="text-xs font-semibold mb-1" style={{ color: 'var(--theme-text)' }}>{s.label}</p>
+              <p className="text-sm font-semibold mb-1.5" style={{ color: 'var(--theme-text)' }}>{s.label}</p>
               {mittelList.length === 0 ? (
                 <p className="text-xs" style={{ color: 'var(--theme-text-faint)' }}>Keine Einsatzmittel zugeordnet</p>
               ) : (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5">
                   {mittelList.map((e) => (
                     <div
                       key={e.id}
-                      className="flex items-center gap-1 text-xs rounded-md px-2 py-0.5"
+                      className="flex items-center gap-1.5 text-sm rounded-lg px-2.5 py-1"
                       style={{ background: 'var(--theme-bg)', border: '1px solid var(--theme-border)', color: 'var(--theme-text)' }}
                     >
                       {e.has_icon && (
-                        <img src={`/api/einsatzmittel/${e.id}/icon`} alt="" className="w-3.5 h-3.5 object-contain" />
+                        <img src={`/api/einsatzmittel/${e.id}/icon`} alt="" className="w-5 h-5 object-contain" />
                       )}
                       {e.klarname ?? e.name}
                     </div>
