@@ -18,6 +18,7 @@ const ALLOWED_KEYS = new Set([
   'tagesnachricht',
   'daynight_mode',
   'map_style',
+  'slipways_enabled',
   // Warnfarben
   'color_warn_normal',
   'color_warn_elevated',

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import RainRadarLayer from './RainRadarLayer';
 import HelicopterLayer, { type Helicopter } from './HelicopterLayer';
+import SlipwayLayer from './SlipwayLayer';
 
 export interface MapStation {
   station_id: string;
@@ -13,7 +14,7 @@ export interface MapStation {
   warnLevel?: 'normal' | 'elevated' | 'critical' | 'alarm';
 }
 
-export type MapStyle = 'dark' | 'osm' | 'light' | 'contrast';
+export type MapStyle = 'dark' | 'osm' | 'light' | 'contrast' | 'topo' | 'satellite' | 'humanitarian';
 
 const TILE_LAYERS: Record<MapStyle, { url: string; attribution: string; subdomains?: string }> = {
   dark: {
@@ -36,6 +37,20 @@ const TILE_LAYERS: Record<MapStyle, { url: string; attribution: string; subdomai
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
   },
+  topo: {
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | © <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
+    subdomains: 'abc',
+  },
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, GIS User Community',
+  },
+  humanitarian: {
+    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors, Tiles © <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>',
+    subdomains: 'abc',
+  },
 };
 
 interface Props {
@@ -45,6 +60,7 @@ interface Props {
   locationBbox?: [number, number, number, number]; // [south, north, west, east]
   helicopters?: Helicopter[];
   openskyEnabled?: boolean;
+  slipwaysEnabled?: boolean;
   mapStyle?: MapStyle;
 }
 
@@ -66,6 +82,7 @@ export default function MapWidget({
   locationBbox,
   helicopters = [],
   openskyEnabled = false,
+  slipwaysEnabled = false,
   mapStyle = 'dark',
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -177,6 +194,8 @@ export default function MapWidget({
       )}
       {/* Rain radar toggle button + layer */}
       <RainRadarLayer map={mapRef.current} />
+      {/* Slipway toggle button + layer */}
+      {slipwaysEnabled && <SlipwayLayer map={mapRef.current} />}
       {/* Helicopter layer */}
       {openskyEnabled && <HelicopterLayer map={mapRef.current} helicopters={helicopters} />}
     </div>

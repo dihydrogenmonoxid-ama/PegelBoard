@@ -101,10 +101,13 @@ export default function ConfigPage() {
   }
 
   const MAP_STYLE_OPTIONS = [
-    { value: 'dark',     label: 'Carto Dark (Standard)' },
-    { value: 'light',    label: 'Carto Light' },
-    { value: 'osm',      label: 'OSM Standard' },
-    { value: 'contrast', label: 'Hochkontrast (Voyager)' },
+    { value: 'dark',         label: 'Carto Dark (Standard)' },
+    { value: 'light',        label: 'Carto Light' },
+    { value: 'osm',          label: 'OSM Standard' },
+    { value: 'contrast',     label: 'Hochkontrast (Voyager)' },
+    { value: 'topo',         label: 'Topografisch (OpenTopoMap)' },
+    { value: 'satellite',    label: 'Satellit (ESRI World Imagery)' },
+    { value: 'humanitarian', label: 'Humanitär (OSM-HOT)' },
   ];
 
   if (loading) return <div className="text-white/30 text-sm">Lade …</div>;
@@ -286,6 +289,19 @@ export default function ConfigPage() {
               ))}
             </select>
           </label>
+
+          {/* Slippstellen */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wider">Slippstellen anzeigen</p>
+              <p className="text-xs text-white/30 mt-0.5">Bootsrampen aus OSM via Overpass (⚓-Knopf auf der Karte)</p>
+            </div>
+            <button type="button"
+              onClick={() => set('slipways_enabled', values['slipways_enabled'] === 'true' ? 'false' : 'true')}
+              className={`relative w-11 h-6 rounded-full transition-colors ${values['slipways_enabled'] === 'true' ? 'bg-pb-signal' : 'bg-white/10'}`}>
+              <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${values['slipways_enabled'] === 'true' ? 'left-6' : 'left-1'}`} />
+            </button>
+          </div>
 
           {/* Warn colors */}
           <div className="flex flex-col gap-3">

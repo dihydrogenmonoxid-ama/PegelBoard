@@ -24,6 +24,7 @@ interface PublicConfig {
   location_bbox?: string;
   daynight_mode?: string;
   opensky_enabled?: string;
+  slipways_enabled?: string;
   tagesnachricht?: string;
   map_style?: string;
 }
@@ -139,6 +140,7 @@ export default function Dashboard() {
             locationBbox={locationBbox}
             helicopters={helicopters}
             openskyEnabled={config.opensky_enabled === 'true'}
+            slipwaysEnabled={config.slipways_enabled === 'true'}
             mapStyle={(config.map_style as import('../components/MapWidget').MapStyle) ?? 'dark'}
           />
         ) : (

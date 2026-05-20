@@ -18,6 +18,7 @@ const PUBLIC_KEYS = new Set([
   'opensky_enabled',
   'tagesnachricht',
   'map_style',
+  'slipways_enabled',
 ]);
 
 export async function publicConfigRoutes(fastify: FastifyInstance) {

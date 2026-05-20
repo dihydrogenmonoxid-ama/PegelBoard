@@ -21,6 +21,7 @@ import { adminAaoRoutes } from './routes/admin/aao.js';
 import { adminGeocodeRoutes } from './routes/admin/geocode.js';
 import { adminCallsignRoutes } from './routes/admin/callsigns.js';
 import { weatherRoutes } from './routes/weather.js';
+import { slipwayRoutes } from './routes/slipways.js';
 import { fetchStationCurrent } from './services/pegelonline.js';
 import { db } from './db/database.js';
 import { recordFetchSuccess, recordFetchError } from './lib/cache.js';
@@ -51,6 +52,7 @@ await fastify.register(sunRoutes);
 await fastify.register(statusRoutes);
 await fastify.register(helicopterRoutes);
 await fastify.register(weatherRoutes);
+await fastify.register(slipwayRoutes);
 
 // Admin routes
 await fastify.register(adminStationRoutes);
