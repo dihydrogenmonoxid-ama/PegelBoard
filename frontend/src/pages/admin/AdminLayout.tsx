@@ -50,6 +50,9 @@ export default function AdminLayout() {
           </NavLink>
         ))}
         <div className="mt-auto flex flex-col gap-1">
+          <p className="px-3 pb-1 text-xs" style={{ color: 'var(--theme-text-faint)' }}>
+            v{__APP_VERSION__}
+          </p>
           <NavLink to="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/40 hover:text-white/60 transition-colors">
             <span className="w-4 text-center">←</span>Dashboard
           </NavLink>

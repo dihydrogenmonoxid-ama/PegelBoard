@@ -125,9 +125,21 @@ npm run dev
 
 - Frontend: [http://localhost:5173](http://localhost:5173)
 - Backend: [http://localhost:4000](http://localhost:4000)
-- Admin: [http://localhost:5173/admin](http://localhost:5173/admin) → `admin` / `wasser`
+- Admin: [http://localhost:5173/admin](http://localhost:5173/admin)
 
 Nach dem ersten Start im Admin unter **Konfiguration** den Standort (lat/lon) eintragen – dann funktionieren Sonnenzeiten, automatischer Tag/Nacht-Modus und Wetter.
+
+---
+
+## Standardzugangsdaten
+
+> **Wichtig:** Das Passwort beim ersten Start sofort unter **Admin → Passwort** ändern!
+
+| Benutzer | Passwort |
+|---|---|
+| `admin` | `wasser` |
+
+Das System erkennt beim ersten Login das Standardpasswort und ersetzt den internen Platzhalter automatisch durch einen sicheren scrypt-Hash. Bis zur Änderung bleibt das Passwort `wasser` aktiv.
 
 ---
 
@@ -229,6 +241,23 @@ Keine Cloud-Abhängigkeiten. Keine externen Dienste außer den Datenquellen. Lä
 - [ ] **Kamerabild-Integration** – Livebild einer Webcam im Dashboard
 - [ ] **Exportfunktion** – Einsatzlog als PDF exportieren
 - [ ] **Dark-Mode-Farbprofile** – mehrere vordefinierte Farbschemata wählbar
+
+---
+
+## Changelog
+
+Die vollständige Versionshistorie befindet sich in [CHANGELOG.md](CHANGELOG.md).
+
+### v0.2.0 – Mai 2026
+- **Tagesnachricht** – Freitextnachricht im Dashboard-Header
+- **Regenradar** – RainViewer-Overlay per Knopfdruck ein-/ausblendbar
+- **Kartenstile** – Carto Dark / Light, OSM Standard, Hochkontrast
+- **Klarname-Mapping** – lesbare Namen für OpenSky-Hubschrauber-Callsigns
+- **AAO-Rechtspalte** – zweispaltige AAO-Ansicht mit eigenen Fahrzeug-Icons
+- Admin-Bereich überarbeitet, Versionsanzeige im Sidebar
+
+### v0.1.0 – April 2026
+- Erstveröffentlichung: Pegelstände, Wetter, Warnungen, Karte, GPIO, Einsatzbetrieb
 
 ---
 
