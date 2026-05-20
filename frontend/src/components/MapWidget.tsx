@@ -75,6 +75,64 @@ const WARN_LEVEL_RANK: Record<string, number> = {
   normal: 0, elevated: 1, critical: 2, alarm: 3,
 };
 
+const LEGEND_ITEMS = [
+  { color: 'var(--color-warn-normal)',   label: 'Normal' },
+  { color: 'var(--color-warn-elevated)', label: 'Erhöht' },
+  { color: 'var(--color-warn-critical)', label: 'Kritisch' },
+  { color: 'var(--color-warn-alarm)',    label: 'Alarm' },
+];
+
+function MapLegend({ slipwaysEnabled }: { slipwaysEnabled: boolean }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: '10px',
+        left: '10px',
+        zIndex: 1000,
+        background: 'var(--theme-card)',
+        border: '1px solid var(--theme-border)',
+        borderRadius: '8px',
+        padding: '8px 10px',
+        backdropFilter: 'blur(8px)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+        pointerEvents: 'none',
+      }}
+    >
+      {LEGEND_ITEMS.map(({ color, label }) => (
+        <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{
+            display: 'inline-block',
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            background: color,
+            border: '1.5px solid rgba(255,255,255,0.6)',
+            flexShrink: 0,
+          }} />
+          <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)', lineHeight: 1 }}>{label}</span>
+        </div>
+      ))}
+      {slipwaysEnabled && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', paddingTop: '4px', borderTop: '1px solid var(--theme-border)' }}>
+          <span style={{
+            display: 'inline-block',
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            background: '#06b6d4',
+            border: '1.5px solid rgba(255,255,255,0.6)',
+            flexShrink: 0,
+          }} />
+          <span style={{ fontSize: '11px', color: 'var(--theme-text-muted)', lineHeight: 1 }}>Slippstelle</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MapWidget({
   stations,
   centerLat = 51.0,
@@ -198,6 +256,8 @@ export default function MapWidget({
       {slipwaysEnabled && <SlipwayLayer map={mapRef.current} />}
       {/* Helicopter layer */}
       {openskyEnabled && <HelicopterLayer map={mapRef.current} helicopters={helicopters} />}
+      {/* Map legend */}
+      <MapLegend slipwaysEnabled={slipwaysEnabled} />
     </div>
   );
 }
