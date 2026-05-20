@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Map as LeafletMap } from 'leaflet';
 import L from 'leaflet';
 
@@ -14,7 +14,6 @@ interface Props {
 }
 
 export default function SlipwayLayer({ map }: Props) {
-  const [enabled, setEnabled] = useState(false);
   const markersRef = useRef<L.CircleMarker[]>([]);
 
   function clearMarkers() {
@@ -48,9 +47,7 @@ export default function SlipwayLayer({ map }: Props) {
         opacity: 0.9,
         fillOpacity: 0.85,
       });
-      const label = s.name
-        ? `<b>${s.name}</b><br>Slippstelle`
-        : 'Slippstelle';
+      const label = s.name ? `<b>${s.name}</b><br>Slippstelle` : 'Slippstelle';
       marker.bindPopup(`<div style="font:13px system-ui;color:#0a1628">⚓ ${label}</div>`);
       marker.addTo(currentMap);
       markersRef.current.push(marker);
@@ -59,10 +56,6 @@ export default function SlipwayLayer({ map }: Props) {
 
   useEffect(() => {
     if (!map) return;
-    if (!enabled) {
-      clearMarkers();
-      return;
-    }
 
     void loadSlipways(map);
 
@@ -70,32 +63,12 @@ export default function SlipwayLayer({ map }: Props) {
     map.on('moveend', onMoveEnd);
     return () => {
       map.off('moveend', onMoveEnd);
+      clearMarkers();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, enabled]);
+  }, [map]);
 
   useEffect(() => () => clearMarkers(), []);
 
-  return (
-    <button
-      onClick={() => setEnabled((e) => !e)}
-      title={enabled ? 'Slippstellen ausblenden' : 'Slippstellen einblenden'}
-      style={{
-        position: 'absolute',
-        bottom: '130px',
-        right: '10px',
-        zIndex: 1000,
-        background: enabled ? '#06b6d4' : 'var(--theme-card)',
-        border: '1px solid var(--theme-border)',
-        borderRadius: '6px',
-        padding: '4px 8px',
-        fontSize: '14px',
-        cursor: 'pointer',
-        color: enabled ? '#fff' : 'var(--theme-text-muted)',
-        backdropFilter: 'blur(8px)',
-      }}
-    >
-      ⚓
-    </button>
-  );
+  return null;
 }
