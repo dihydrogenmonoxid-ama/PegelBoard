@@ -31,6 +31,18 @@ export default function AdminOverview() {
         <Step done={stationCount != null && stationCount > 0} label="Pegelstationen hinzufügen" to="/admin/stations" />
         <Step done={false} label="Standard-Passwort ändern (admin / wasser)" to="/admin/users" />
       </div>
+      <Link
+        to="/admin/system"
+        className="glass rounded-2xl p-5 flex items-center justify-between group hover:bg-white/5 transition-colors"
+      >
+        <div>
+          <p className="text-sm font-medium text-white">System & Backup</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--theme-text-faint)' }}>
+            Updates von GitHub, Konfiguration exportieren und importieren
+          </p>
+        </div>
+        <span className="text-lg group-hover:translate-x-1 transition-transform" style={{ color: 'var(--theme-text-faint)' }}>→</span>
+      </Link>
     </div>
   );
 }

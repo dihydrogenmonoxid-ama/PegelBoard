@@ -20,6 +20,8 @@ import { adminResourcesRoutes } from './routes/admin/resources.js';
 import { adminAaoRoutes } from './routes/admin/aao.js';
 import { adminGeocodeRoutes } from './routes/admin/geocode.js';
 import { adminCallsignRoutes } from './routes/admin/callsigns.js';
+import { adminUpdateRoutes } from './routes/admin/update.js';
+import { adminBackupRoutes } from './routes/admin/backup.js';
 import { weatherRoutes } from './routes/weather.js';
 import { slipwayRoutes } from './routes/slipways.js';
 import { fetchStationCurrent } from './services/pegelonline.js';
@@ -63,6 +65,8 @@ await fastify.register(adminResourcesRoutes);
 await fastify.register(adminAaoRoutes);
 await fastify.register(adminGeocodeRoutes);
 await fastify.register(adminCallsignRoutes);
+await fastify.register(adminUpdateRoutes);
+await fastify.register(adminBackupRoutes);
 
 fastify.get('/api/health', async () => ({ status: 'ok', ts: new Date().toISOString() }));
 

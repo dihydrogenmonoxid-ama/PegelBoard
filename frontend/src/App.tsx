@@ -8,6 +8,7 @@ import StationsPage from './pages/admin/StationsPage';
 import ConfigPage from './pages/admin/ConfigPage';
 import UsersPage from './pages/admin/UsersPage';
 import ResourcesPage from './pages/admin/ResourcesPage';
+import SystemPage from './pages/admin/SystemPage';
 
 function ProtectedRoute() {
   const [auth, setAuth] = useState<'loading' | 'ok' | 'fail'>('loading');
@@ -36,10 +37,11 @@ export default function App() {
             <Route index element={<Navigate to="/admin/stations" replace />} />
             <Route path="stations" element={<StationsPage />} />
             <Route path="config" element={<ConfigPage />} />
-            <Route path="users" element={<UsersPage />} />
+            <Route path="users" element={<Navigate to="/admin/system" replace />} />
             <Route path="ops" element={<Navigate to="/admin/resources" replace />} />
             <Route path="resources" element={<ResourcesPage />} />
             <Route path="aao" element={<Navigate to="/admin/resources" replace />} />
+            <Route path="system" element={<SystemPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

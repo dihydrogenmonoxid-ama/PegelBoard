@@ -6,8 +6,8 @@ import { PegelBoardMark } from '../../components/PegelBoardMark';
 const NAV = [
   { to: '/admin/stations',  label: 'Pegelstationen',        icon: '〰' },
   { to: '/admin/config',    label: 'Konfiguration',         icon: '⚙' },
-  { to: '/admin/users',     label: 'Passwort',              icon: '🔑' },
   { to: '/admin/resources', label: 'Einsatzmittel und AAO', icon: '🚤' },
+  { to: '/admin/system',    label: 'System & Backup',       icon: '↻' },
 ];
 
 export default function AdminLayout() {
