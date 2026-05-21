@@ -20,6 +20,8 @@ const ALLOWED_KEYS = new Set([
   'map_style',
   'slipways_enabled',
   'radar_enabled',
+  'radar_animated',
+  'radar_opacity',
   'aao_position',
   'em_name_mode',
   // Warnfarben

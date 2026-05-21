@@ -73,9 +73,11 @@ Das Dashboard ist für **große Monitore und Lageräume** konzipiert: lesbar aus
 
 ### 🗺️ Interaktive Karte
 - **Pegelmarker** farbig nach Warnstufe (grün → gelb → orange → rot), inkl. Wassertemperatur
-- **Regenradar** per Knopfdruck (RainViewer, kein API-Key nötig)
+- **Regenradar** per Knopfdruck (DWD GeoServer WMS, kein API-Key nötig); optionaler 2-Stunden-Animationsloop; Deckkraft im Admin einstellbar
+- **Slippstellen** als Kartenoverlay (OSM via Overpass API, 6h-Cache)
 - Optionales **Hubschrauber-Tracking** via OpenSky Network 🚁 mit Klarname-Mapping
-- Wählbare **Kartenstile**: Carto Dark, Carto Light, OSM Standard, Hochkontrast
+- Wählbare **Kartenstile**: Carto Dark, Carto Light, OSM Standard, Hochkontrast, Topo, Satellit, Humanitär
+- **Kartenlegende** dauerhaft eingeblendet (unten links) mit allen Warnstufen
 
 ### ⚠️ Warnungen
 - **NINA / MoWaS** – offizielle Bevölkerungsschutzwarnungen
@@ -107,8 +109,8 @@ Das Dashboard ist für **große Monitore und Lageräume** konzipiert: lesbar aus
 ### 📋 Einsatzbetrieb
 - **Tagesnachricht** – Freitextnachricht im Dashboard-Header für alle Schichtdienstler sichtbar
 - **Einsatzanmerkungen** – timestamptes Log für Lagefeststellungen
-- **Einsatzmittel** – Ressourcenliste mit Status, Klarname (Funkrufzeichen), ISSI und Icon
-- **AAO-Matrix** – Alarm- und Ausrückordnung mit eigenen Fahrzeug-Icons und Reihenfolge
+- **Einsatzmittel** – Ressourcenliste mit Status, Klarname (Funkrufzeichen), ISSI und Icon; Namensanzeige (Kurzname oder Funkrufname) wählbar
+- **AAO-Matrix** – Alarm- und Ausrückordnung mit eigenen Fahrzeug-Icons; Position (links/rechts) im Admin konfigurierbar
 
 ---
 
@@ -194,7 +196,7 @@ Alle Kerndaten funktionieren **ohne API-Key**:
 | [Bright Sky](https://brightsky.dev) | Aktuelles Wetter, 24h-Vorhersage (DWD) | ❌ |
 | [DWD OpenData](https://opendata.dwd.de) | Wetterwarnungen | ❌ |
 | [NINA / MoWaS](https://warnung.bund.de) | Bevölkerungsschutzwarnungen | ❌ |
-| [RainViewer](https://www.rainviewer.com/api.html) | Regenradar-Overlay | ❌ |
+| [DWD GeoServer](https://maps.dwd.de/geoserver/web/) | Regenradar-Overlay (WMS) | ❌ |
 | [OpenSky Network](https://opensky-network.org) | Hubschrauber-Tracking | optional |
 
 ---

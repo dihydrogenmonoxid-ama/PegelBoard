@@ -5,6 +5,29 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 ---
 
+## [0.3.0] – 2026-05-21
+
+### Neu
+- **Regenradar (DWD WMS)** – Vollständige Überarbeitung: Datenquelle jetzt DWD GeoServer (`dwd:Niederschlagsradar`) per WMS statt RainViewer; BBOX-basiert, kein Zoom-Level-Problem; kein API-Key nötig
+- **Radar-Animation** – Optionaler 2-Stunden-Loop (25 Frames à 5 min); zwei WMS-Layer wechseln sich mit Opacity-Crossfade ab; läuft vollautomatisch ohne Benutzereingriff (kiosktauglich); Zeitbalken zeigt aktuellen Frame
+- **Radar-Deckkraft** – Slider im Admin (10–100 %), default 65 %; live wirksam ohne Neustart
+- **Slippstellen (OSM)** – Bootsrampen und Slipwege aus OpenStreetMap via Overpass API als Kartenoverlay; 6-Stunden-Cache im Backend; Toggle im Admin
+- **Erweiterte Kartenstile** – Zusätzlich: Topo (OpenTopoMap), Satellit (ESRI World Imagery), Humanitär (OSM HOT)
+- **Kartenlegende** – Dauerhaft eingeblendetes Overlay (unten links) mit allen Warnstufen sowie optionalen Einträgen für Slippstellen und Regenradar
+- **AAO-Position wählbar** – Konfigurierbar ob die AAO-Sektion links (unter Pegelstände) oder rechts (unter Wetter/Vorhersage) erscheint
+- **Einsatzmittel-Bezeichnung** – Auswahl zwischen Kurzname/Klarname und vollständigem Funkrufname je Fahrzeug
+
+### Geändert
+- Alle Radar- und Slippstellen-Toggles ins Backend verlegt (kein Frontend-Button mehr)
+- AAO-Fahrzeugicons größer skaliert; Alpha-Kanal wird korrekt gegen den Glass-Card-Hintergrund freigestellt
+- Nachrichten-Sektion in der BottomBar nur noch sichtbar wenn im Admin explizit aktiviert (`show_news = true`)
+
+### Behoben
+- Regenradar zeigte bei engem Zoom „Zoom Level not supported" (behoben durch WMS-Wechsel)
+- `show_news`-Logik zeigte Nachrichten auch ohne aktiven Toggle
+
+---
+
 ## [0.2.0] – 2026-05-20
 
 ### Neu
