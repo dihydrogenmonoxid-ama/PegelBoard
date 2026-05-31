@@ -113,22 +113,22 @@ export default function ConfigPage() {
   if (loading) return <div className="text-white/30 text-sm">Lade …</div>;
 
   return (
-    <div className="flex flex-col gap-6 max-w-5xl">
+    <div className="flex flex-col gap-4 max-w-5xl">
       <div>
         <h1 className="text-2xl font-bold text-white">Konfiguration</h1>
         <p className="text-white/40 text-sm mt-1">Standort, API-Keys und Darstellung</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
         {/* 2-column grid layout */}
-        <div className="grid grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-2 gap-4 items-start">
 
         {/* ── Spalte 1 ── */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
 
         {/* Heimatstandort */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">Heimatstandort</h2>
           <p className="text-xs text-white/30 -mt-3">Basis für Karte, Wetter, Sonnenzeiten und NINA-Warnungen</p>
 
@@ -202,7 +202,7 @@ export default function ConfigPage() {
         </section>
 
         {/* System / API */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">System & API</h2>
           {SYSTEM_FIELDS.map(({ key, label, placeholder, hint }) => (
             <label key={key} className="flex flex-col gap-1.5">
@@ -233,7 +233,7 @@ export default function ConfigPage() {
         </section>
 
         {/* Darstellung */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">Darstellung</h2>
 
           {/* Toggle: Show map */}
@@ -316,6 +316,19 @@ export default function ConfigPage() {
             </button>
           </div>
 
+          {/* AAO aktivieren */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wider">AAO-Widget anzeigen</p>
+              <p className="text-xs text-white/30 mt-0.5">Blendet das AAO-Widget im Dashboard aus</p>
+            </div>
+            <button type="button"
+              onClick={() => set('aao_enabled', values['aao_enabled'] === 'false' ? 'true' : 'false')}
+              className={`relative w-11 h-6 rounded-full transition-colors ${values['aao_enabled'] !== 'false' ? 'bg-pb-signal' : 'bg-white/10'}`}>
+              <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${values['aao_enabled'] !== 'false' ? 'left-6' : 'left-1'}`} />
+            </button>
+          </div>
+
           {/* AAO-Position */}
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-white/60 uppercase tracking-wider">AAO-Position</span>
@@ -355,7 +368,7 @@ export default function ConfigPage() {
         </section>
 
         {/* Tag/Nacht-Modus */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">Tag / Nacht</h2>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-white/60 uppercase tracking-wider">Modus</span>
@@ -369,7 +382,7 @@ export default function ConfigPage() {
         </section>
 
         {/* Tagesnachricht */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">Tagesnachricht</h2>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-white/60 uppercase tracking-wider">Nachricht (optional)</span>
@@ -384,10 +397,10 @@ export default function ConfigPage() {
         </div>{/* Ende Spalte 1 */}
 
         {/* ── Spalte 2 ── */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
 
         {/* GPIO */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">GPIO / Signalturm (Raspberry Pi)</h2>
           <div className="flex items-center justify-between">
             <div>
@@ -414,7 +427,7 @@ export default function ConfigPage() {
         </section>
 
         {/* Hubschrauber */}
-        <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+        <section className="glass rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider -mb-1">Hubschrauber-Tracking (OpenSky)</h2>
           <div className="flex items-center justify-between">
             <div>
@@ -499,6 +512,7 @@ export default function ConfigPage() {
 
         </div>{/* Ende Spalte 2 */}
         </div>{/* Ende Grid */}
+
 
         {feedback && (
           <p className={`text-sm rounded-lg px-4 py-2.5 ${feedback.ok ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'}`}>

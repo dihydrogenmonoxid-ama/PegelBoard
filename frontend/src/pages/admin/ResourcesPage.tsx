@@ -28,15 +28,6 @@ const EMPTY: Omit<Einsatzmittel, 'id' | 'has_icon'> = {
   name: '', klarname: '', typ: '', status: 'verfügbar', notizen: '', sort_order: 0, issi: '',
 };
 
-// ── Einsatzlog ────────────────────────────────────────────────────────────
-
-interface OpsEntry {
-  id: number;
-  text: string;
-  author: string;
-  created_at: string;
-}
-
 // ── AAO ───────────────────────────────────────────────────────────────────
 
 interface AaoMittel { einsatzmittel_id: number; reihenfolge: number }
@@ -62,24 +53,13 @@ export default function ResourcesPage() {
   const [newLabel, setNewLabel] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
-  // Einsatzlog state
-  const [opsEntries, setOpsEntries] = useState<OpsEntry[]>([]);
-  const [opsText, setOpsText] = useState('');
-  const [opsSaving, setOpsSaving] = useState(false);
-  const [opsFeedback, setOpsFeedback] = useState('');
-
   const loadItems = () => {
     api.get<Einsatzmittel[]>('/api/admin/einsatzmittel').then(setItems).catch(() => {});
-  };
-
-  const loadOps = () => {
-    api.get<OpsEntry[]>('/api/admin/ops-log').then(setOpsEntries).catch(() => {});
   };
 
   useEffect(() => {
     loadItems();
     api.get<AaoConfig>('/api/admin/aao').then(setAaoConfig).catch(() => {});
-    loadOps();
   }, []);
 
   // ── Einsatzmittel handlers ───────────────────────────────────────────────
@@ -221,33 +201,6 @@ export default function ResourcesPage() {
     });
   };
 
-  // ── Einsatzlog handlers ──────────────────────────────────────────────────
-
-  const handleOpsSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!opsText.trim()) return;
-    setOpsSaving(true);
-    try {
-      await api.post('/api/admin/ops-log', { text: opsText.trim() });
-      setOpsText('');
-      loadOps();
-      setOpsFeedback('Eintrag gespeichert.');
-    } catch {
-      setOpsFeedback('Fehler beim Speichern.');
-    } finally {
-      setOpsSaving(false);
-    }
-  };
-
-  const handleOpsDelete = async (id: number) => {
-    try {
-      await api.del(`/api/admin/ops-log/${id}`);
-      loadOps();
-    } catch {
-      setOpsFeedback('Fehler beim Löschen.');
-    }
-  };
-
   // ── Styles ────────────────────────────────────────────────────────────────
 
   const inputStyle = {
@@ -272,7 +225,7 @@ export default function ResourcesPage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-6 max-w-5xl flex flex-col gap-8">
+    <div className="p-4 max-w-5xl flex flex-col gap-5">
 
       {/* ── Einsatzmittel ── */}
       <div className="flex flex-col gap-4">
@@ -575,61 +528,6 @@ export default function ResourcesPage() {
             })}
           </div>
         )}
-      </div>
-
-      {/* ── Einsatzlog ── */}
-      <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold" style={{ color: 'var(--theme-text)' }}>Einsatzanmerkungen</h2>
-
-        <form onSubmit={handleOpsSubmit} className="glass rounded-xl p-4 flex flex-col gap-3">
-          <textarea
-            value={opsText}
-            onChange={(e) => setOpsText(e.target.value)}
-            placeholder="Neue Anmerkung..."
-            rows={3}
-            className="w-full rounded-lg p-3 text-sm resize-none"
-            style={{
-              background: 'var(--theme-bg)',
-              color: 'var(--theme-text)',
-              border: '1px solid var(--theme-border)',
-            }}
-          />
-          <div className="flex items-center justify-between">
-            {opsFeedback && <span className="text-xs" style={{ color: 'var(--color-warn-normal)' }}>{opsFeedback}</span>}
-            <button
-              type="submit"
-              disabled={opsSaving || !opsText.trim()}
-              className="ml-auto px-4 py-2 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-50"
-              style={{ background: 'var(--color-pb-signal)', color: '#fff' }}
-            >
-              {opsSaving ? 'Speichern…' : 'Eintragen'}
-            </button>
-          </div>
-        </form>
-
-        <div className="flex flex-col gap-2">
-          {opsEntries.length === 0 && (
-            <p className="text-sm" style={{ color: 'var(--theme-text-faint)' }}>Keine Einträge.</p>
-          )}
-          {opsEntries.map((entry) => (
-            <div key={entry.id} className="glass rounded-xl p-4 flex gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-xs mb-1" style={{ color: 'var(--theme-text-muted)' }}>
-                  {new Date(entry.created_at).toLocaleString('de-DE')} · {entry.author}
-                </p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--theme-text)' }}>{entry.text}</p>
-              </div>
-              <button
-                onClick={() => handleOpsDelete(entry.id)}
-                className="text-xs flex-shrink-0 hover:opacity-70 transition-opacity"
-                style={{ color: 'var(--color-warn-alarm)' }}
-                title="Löschen"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
       </div>
 
     </div>

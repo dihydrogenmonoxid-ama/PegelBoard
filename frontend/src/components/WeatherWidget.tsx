@@ -145,7 +145,7 @@ export default function WeatherWidget({ embedded = false }: WeatherWidgetProps) 
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-1.5 flex-1 content-start">
+      <div className="grid grid-cols-2 gap-1.5">
         <Stat label="Feuchte" value={weather.relative_humidity != null ? `${weather.relative_humidity.toFixed(0)} %` : '—'} />
         <Stat label="Niederschlag" value={weather.precipitation_60 != null ? `${weather.precipitation_60.toFixed(1)} mm` : '—'} sub="60 min" />
         <Stat label="Luftdruck" value={weather.pressure_msl != null ? `${weather.pressure_msl.toFixed(0)} hPa` : '—'} />
@@ -153,7 +153,7 @@ export default function WeatherWidget({ embedded = false }: WeatherWidgetProps) 
       </div>
 
       {/* Attribution */}
-      <p className="text-xs flex-shrink-0" style={{ color: 'var(--theme-text-faint)' }}>
+      <p className="text-xs mt-auto" style={{ color: 'var(--theme-text-faint)' }}>
         Quelle: Brightsky / © DWD
       </p>
     </div>

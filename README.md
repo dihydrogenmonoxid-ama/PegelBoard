@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <img src=".github/assets/header.png" alt="PegelBoard Dashboard" />
+  <img src="design/2026-05-31 PegelBoard.png" alt="PegelBoard Dashboard" width="100%" />
 </p>
 
 ![License](https://img.shields.io/github/license/dihydrogenmonoxid-ama/PegelBoard)
@@ -108,9 +108,9 @@ Das Dashboard ist für **große Monitore und Lageräume** konzipiert: lesbar aus
 
 ### 📋 Einsatzbetrieb
 - **Tagesnachricht** – Freitextnachricht im Dashboard-Header für alle Schichtdienstler sichtbar
-- **Einsatzanmerkungen** – timestamptes Log für Lagefeststellungen
-- **Einsatzmittel** – Ressourcenliste mit Status, Klarname (Funkrufzeichen), ISSI und Icon; Namensanzeige (Kurzname oder Funkrufname) wählbar
-- **AAO-Matrix** – Alarm- und Ausrückordnung mit eigenen Fahrzeug-Icons; Position (links/rechts) im Admin konfigurierbar
+- **Einsatzmittel** – Ressourcenliste mit Status, Klarname (Funkrufzeichen), ISSI und Icon; Namensanzeige (Kurzname oder Funkrufname) wählbar; nicht verfügbare Einheiten automatisch hervorgehoben
+- **AAO-Matrix** – Alarm- und Ausrückordnung mit eigenen Fahrzeug-Icons; Position (links/rechts) und Sichtbarkeit im Admin konfigurierbar
+- **Backup & Restore** – vollständiges ZIP-Backup aller Einstellungen inkl. Icons und Logo; Import per Drag-and-Drop
 
 ---
 
@@ -250,13 +250,23 @@ Keine Cloud-Abhängigkeiten. Keine externen Dienste außer den Datenquellen. Lä
 
 Die vollständige Versionshistorie befindet sich in [CHANGELOG.md](CHANGELOG.md).
 
+### v0.4.0 – Mai 2026
+- **Backup als ZIP** – Icons und Logo als echte Dateien im Archiv, nicht als Base64 eingebettet
+- **AAO deaktivierbar** – Toggle im Admin blendet das AAO-Widget auf dem Dashboard aus
+- **Warnungsquellen-Badge** – NINA / DWD / LHP wird als Pill-Badge je Warnung angezeigt
+- **Nachrichten als Stichpunkte** – Bullet-Point-Format mit fett hervorgehobener Uhrzeit
+- **Einsatzmittel außer Dienst** – Widget blendet sich automatisch aus, wenn alle verfügbar sind
+- Admin-UI kompakter, Dashboard-Widgets verfeinert (Sparklines, Abstände, Typografie)
+
+### v0.3.0 – Mai 2026
+- **Regenradar (DWD WMS)** – Vollständige Überarbeitung, BBOX-basiert, kein Zoom-Problem
+- **Radar-Animation** – 2-Stunden-Loop mit Opacity-Crossfade
+- **Slippstellen (OSM)** – Bootsrampen via Overpass API als Kartenoverlay
+- **Erweiterte Kartenstile** – Topo, Satellit, Humanitär
+- **Kartenlegende**, **AAO-Position wählbar**, **Einsatzmittel-Bezeichnung**
+
 ### v0.2.0 – Mai 2026
-- **Tagesnachricht** – Freitextnachricht im Dashboard-Header
-- **Regenradar** – RainViewer-Overlay per Knopfdruck ein-/ausblendbar
-- **Kartenstile** – Carto Dark / Light, OSM Standard, Hochkontrast
-- **Klarname-Mapping** – lesbare Namen für OpenSky-Hubschrauber-Callsigns
-- **AAO-Rechtspalte** – zweispaltige AAO-Ansicht mit eigenen Fahrzeug-Icons
-- Admin-Bereich überarbeitet, Versionsanzeige im Sidebar
+- Tagesnachricht, Regenradar, Kartenstile, Klarname-Mapping, AAO-Rechtspalte
 
 ### v0.1.0 – April 2026
 - Erstveröffentlichung: Pegelstände, Wetter, Warnungen, Karte, GPIO, Einsatzbetrieb

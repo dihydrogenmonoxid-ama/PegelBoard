@@ -24,6 +24,7 @@ const PUBLIC_KEYS = new Set([
   'radar_opacity',
   'aao_position',
   'em_name_mode',
+  'aao_enabled',
 ]);
 
 export async function publicConfigRoutes(fastify: FastifyInstance) {

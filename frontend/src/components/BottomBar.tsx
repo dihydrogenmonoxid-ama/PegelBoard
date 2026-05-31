@@ -28,8 +28,21 @@ interface DwdData {
   vorabInformation: Record<string, DwdWarning[]>;
 }
 
+interface LhpAlert {
+  id: string;
+  severity: number;
+  headline: string;
+}
+
 interface NewsItem {
   title: string;
+  pubDate: string;
+}
+
+function formatNewsTime(pubDate: string): string {
+  const d = new Date(pubDate);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
 }
 
 // ── Severity helpers ───────────────────────────────────────────────────────
@@ -55,6 +68,7 @@ interface FlatWarning {
   headline: string;
   severity: string;
   color: string;
+  source: 'NINA' | 'DWD' | 'LHP';
 }
 
 function WarnungenSection() {
@@ -73,6 +87,7 @@ function WarnungenSection() {
             headline: w.payload.data.headline,
             severity: w.payload.data.severity,
             color: SEVERITY_COLOR[w.payload.data.severity] ?? 'var(--color-warn-elevated)',
+            source: 'NINA',
           });
         }
       } catch { /* offline */ }
@@ -86,8 +101,23 @@ function WarnungenSection() {
               headline: w.headline,
               severity: w.severity >= 3 ? 'Severe' : w.severity === 2 ? 'Moderate' : 'Minor',
               color: DWD_SEVERITY_COLOR(w.severity),
+              source: 'DWD',
             });
           }
+        }
+      } catch { /* offline */ }
+
+      try {
+        const lhp = await api.get<LhpAlert[]>('/api/warnings/lhp');
+        for (const w of lhp) {
+          const sev = w.severity >= 3 ? 'Severe' : w.severity === 2 ? 'Moderate' : 'Minor';
+          flat.push({
+            key: `lhp-${w.id}`,
+            headline: w.headline,
+            severity: sev,
+            color: DWD_SEVERITY_COLOR(w.severity),
+            source: 'LHP',
+          });
         }
       } catch { /* offline */ }
 
@@ -112,7 +142,11 @@ function WarnungenSection() {
           <div key={w.key} className="flex items-start gap-2 text-xs overflow-hidden flex-shrink-0"
             style={{ borderLeft: `3px solid ${w.color}`, paddingLeft: '6px' }}>
             <span className="font-bold flex-shrink-0" style={{ color: w.color }}>{w.severity}</span>
-            <span className="truncate" style={{ color: 'var(--theme-text)' }}>{w.headline}</span>
+            <span className="truncate flex-1" style={{ color: 'var(--theme-text)' }}>{w.headline}</span>
+            <span className="flex-shrink-0 font-mono rounded px-1.5 py-0.5"
+              style={{ fontSize: '10px', backgroundColor: 'var(--theme-bg)', color: 'var(--theme-text-faint)', border: '1px solid var(--theme-border)' }}>
+              {w.source}
+            </span>
           </div>
         ))
       )}
@@ -142,11 +176,20 @@ function NachrichtenSection() {
       {items.length === 0 ? (
         <p className="text-xs" style={{ color: 'var(--theme-text-faint)' }}>Keine Nachrichten</p>
       ) : (
-        items.slice(0, 6).map((item, i) => (
-          <p key={i} className="text-xs truncate flex-shrink-0" style={{ color: 'var(--theme-text)' }}>
-            {item.title}
-          </p>
-        ))
+        items.slice(0, 6).map((item, i) => {
+          const time = formatNewsTime(item.pubDate);
+          return (
+            <div key={i} className="flex items-baseline gap-1.5 text-xs flex-shrink-0 overflow-hidden">
+              <span className="flex-shrink-0" style={{ color: 'var(--color-pb-blue-light)' }}>•</span>
+              {time && (
+                <span className="font-bold flex-shrink-0 tabular-nums" style={{ color: 'var(--theme-text-muted)' }}>
+                  {time}
+                </span>
+              )}
+              <span className="truncate" style={{ color: 'var(--theme-text)' }}>{item.title}</span>
+            </div>
+          );
+        })
       )}
     </div>
   );
@@ -188,42 +231,25 @@ const EM_STATUS_COLOR: Record<string, string> = {
   'außer Dienst': 'var(--theme-text-faint)',
 };
 
-function EinsatzmittelSection() {
-  const [items, setItems] = useState<Einsatzmittel[]>([]);
-
-  useEffect(() => {
-    const load = () => {
-      api.get<Einsatzmittel[]>('/api/einsatzmittel').then((all) => {
-        setItems(all.filter((e) => e.status !== 'verfügbar'));
-      }).catch(() => {});
-    };
-    load();
-    const t = setInterval(load, 60_000);
-    return () => clearInterval(t);
-  }, []);
-
+function EinsatzmittelSection({ items }: { items: Einsatzmittel[] }) {
   return (
     <div className="flex flex-col gap-1 overflow-hidden h-full">
       <p className="text-xs font-bold mb-1 flex-shrink-0" style={{ color: 'var(--color-pb-blue-light)' }}>
-        EINSATZMITTEL
+        EINSATZMITTEL AUßER DIENST
       </p>
-      {items.length === 0 ? (
-        <p className="text-xs" style={{ color: 'var(--theme-text-faint)' }}>Alle Einsatzmittel verfügbar</p>
-      ) : (
-        items.map((e) => (
-          <div key={e.id} className="flex items-center gap-2 text-xs overflow-hidden flex-shrink-0">
-            {e.has_icon && (
-              <img src={`/api/einsatzmittel/${e.id}/icon`} alt="" className="w-4 h-4 object-contain flex-shrink-0 rounded" />
-            )}
-            <span className="truncate flex-1" style={{ color: 'var(--theme-text)' }}>
-              {e.name}{e.issi ? ` (ISSI: ${e.issi})` : ''}
-            </span>
-            <span className="flex-shrink-0 font-semibold" style={{ color: EM_STATUS_COLOR[e.status] ?? 'inherit' }}>
-              {e.status}
-            </span>
-          </div>
-        ))
-      )}
+      {items.map((e) => (
+        <div key={e.id} className="flex items-center gap-2 text-xs overflow-hidden flex-shrink-0">
+          {e.has_icon && (
+            <img src={`/api/einsatzmittel/${e.id}/icon`} alt="" className="w-4 h-4 object-contain flex-shrink-0 rounded" />
+          )}
+          <span className="truncate flex-1" style={{ color: 'var(--theme-text)' }}>
+            {e.name}{e.issi ? ` (ISSI: ${e.issi})` : ''}
+          </span>
+          <span className="flex-shrink-0 font-semibold" style={{ color: EM_STATUS_COLOR[e.status] ?? 'inherit' }}>
+            {e.status}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -231,6 +257,7 @@ function EinsatzmittelSection() {
 export default function BottomBar() {
   const [showNews, setShowNews] = useState(false);
   const [tagesnachricht, setTagesnachricht] = useState('');
+  const [emItems, setEmItems] = useState<Einsatzmittel[] | null>(null);
 
   useEffect(() => {
     const load = () => {
@@ -244,11 +271,24 @@ export default function BottomBar() {
     return () => clearInterval(t);
   }, []);
 
+  useEffect(() => {
+    const load = () => {
+      api.get<Einsatzmittel[]>('/api/einsatzmittel').then((all) => {
+        setEmItems(all.filter((e) => e.status !== 'verfügbar'));
+      }).catch(() => {});
+    };
+    load();
+    const t = setInterval(load, 60_000);
+    return () => clearInterval(t);
+  }, []);
+
+  const showEm = emItems !== null && emItems.length > 0;
+
   const sections = [
     { key: 'warnungen', show: true, content: <WarnungenSection /> },
     { key: 'nachrichten', show: showNews, content: <NachrichtenSection /> },
     { key: 'tagesnachricht', show: !!tagesnachricht, content: <TagesnachrichtSection text={tagesnachricht} /> },
-    { key: 'einsatzmittel', show: true, content: <EinsatzmittelSection /> },
+    { key: 'einsatzmittel', show: showEm, content: <EinsatzmittelSection items={emItems ?? []} /> },
   ].filter((s) => s.show);
 
   return (

@@ -28,6 +28,7 @@ interface PublicConfig {
   radar_enabled?: string;
   aao_position?: string;
   em_name_mode?: string;
+  aao_enabled?: string;
   tagesnachricht?: string;
   map_style?: string;
 }
@@ -105,15 +106,21 @@ export default function Dashboard() {
 
   const showMap = config.show_map !== 'false';
   const aaoLeft = config.aao_position === 'left';
+  const aaoEnabled = config.aao_enabled !== 'false';
   const nameMode = (config.em_name_mode ?? 'klarname') as 'klarname' | 'name';
+
+  const gridTemplateColumns = showMap ? '360px 1fr 340px' : '1fr 1fr';
+  const gridTemplateAreas = showMap
+    ? '"top top top" "left center right" "bottom bottom bottom"'
+    : '"top top" "left right" "bottom bottom"';
 
   return (
     <div
       style={{
         display: 'grid',
         gridTemplateRows: 'auto 1fr auto',
-        gridTemplateColumns: '360px 1fr 340px',
-        gridTemplateAreas: '"top top top" "left center right" "bottom bottom bottom"',
+        gridTemplateColumns,
+        gridTemplateAreas,
         height: '100vh',
         width: '100vw',
         overflow: 'hidden',
@@ -135,12 +142,12 @@ export default function Dashboard() {
         <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <GaugeWidget onReadingsChange={handleReadingsChange} liveUpdates={liveUpdates} />
         </div>
-        {aaoLeft && <AaoWidget nameMode={nameMode} />}
+        {aaoLeft && aaoEnabled && <AaoWidget nameMode={nameMode} />}
       </div>
 
-      {/* Center: Map */}
-      <div style={{ gridArea: 'center', overflow: 'hidden', minHeight: 0 }}>
-        {showMap ? (
+      {/* Center: Map (nur wenn aktiviert) */}
+      {showMap && (
+        <div style={{ gridArea: 'center', overflow: 'hidden', minHeight: 0 }}>
           <MapWidget
             stations={mapStations}
             centerLat={center.lat}
@@ -152,13 +159,8 @@ export default function Dashboard() {
             radarEnabled={config.radar_enabled === 'true'}
             mapStyle={(config.map_style as import('../components/MapWidget').MapStyle) ?? 'dark'}
           />
-        ) : (
-          <div className="glass rounded-2xl h-full flex items-center justify-center text-xs"
-            style={{ color: 'var(--theme-text-faint)' }}>
-            Karte deaktiviert
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Right panel: Sonne + Wetter/Vorhersage (+ AAO wenn aao_position=right) */}
       <div
@@ -180,7 +182,7 @@ export default function Dashboard() {
           <div className="border-t mx-3" style={{ borderColor: 'var(--theme-border)' }} />
           <ForecastWidget embedded />
         </div>
-        {!aaoLeft && <AaoWidget nameMode={nameMode} />}
+        {!aaoLeft && aaoEnabled && <AaoWidget nameMode={nameMode} />}
       </div>
 
       {/* Bottom bar */}

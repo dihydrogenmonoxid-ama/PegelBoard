@@ -5,6 +5,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 ---
 
+## [0.4.0] – 2026-05-31
+
+### Neu
+- **Backup als ZIP** – Export enthält Icons der Einsatzmittel und das Organisations-Logo als Einzeldateien im Archiv; Import erkennt und verarbeitet ZIP-Dateien automatisch; Vorschau beim Import zeigt Anzahl erkannter Icons
+- **AAO vollständig deaktivierbar** – Neuer Toggle im Admin schaltet das AAO-Widget auf dem Dashboard aus; Wert wird korrekt in der Config-Whitelist gespeichert
+- **Warnungsquellen-Badge** – Jede Warnung in der BottomBar zeigt ihr Quell-Label (NINA / DWD / LHP) als Pill-Badge
+- **LHP-Warnungen in der BottomBar** – Hochwasserlagedienst-Meldungen erscheinen jetzt auch in der zentralen Warnungs-Sektion
+- **Nachrichten als Stichpunkte** – Bullet-Point-Format mit fett hervorgehobener Uhrzeit pro Meldung
+- **Einsatzmittel-Widget** – Überschrift jetzt „Einsatzmittel außer Dienst"; Widget verschwindet automatisch, wenn alle Einheiten verfügbar sind
+
+### Geändert
+- Dashboard-Widgets optimiert: Sparkline-Diagramme größer (72 px statt 52 px), Sonnenzeiten-Icons prominenter (`text-xl`), Wetter-Attribution am Card-Fuß fixiert (`mt-auto`), Vorhersage-Kacheln luftiger (`p-3`, `gap-1.5`)
+- Admin-UI kompakter: reduziertes Padding und Gap in ConfigPage, ResourcesPage, SystemPage, StationsPage
+- „Einsatzanmerkungen"-Abschnitt aus Admin → Einsatzmittel & AAO entfernt (Funktion durch Tagesnachricht abgedeckt)
+
+### Behoben
+- AAO-Toggle wurde nicht gespeichert, da `aao_enabled` in der Admin-Config-Whitelist (`ALLOWED_KEYS`) fehlte
+
+---
+
 ## [0.3.0] – 2026-05-21
 
 ### Neu

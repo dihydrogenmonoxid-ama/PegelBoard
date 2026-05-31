@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import JSZip from 'jszip';
 import { db } from '../../db/database.js';
 
 // ── Backup format ─────────────────────────────────────────────────────────────
@@ -6,6 +7,7 @@ import { db } from '../../db/database.js';
 export interface BackupV1 {
   version: 1;
   exportedAt: string;
+  logo_file: string | null;
   tables: {
     config: Array<{ key: string; value: string }>;
     gauge_stations: Array<Record<string, unknown>>;
@@ -14,6 +16,37 @@ export interface BackupV1 {
     aao_icons: Array<Record<string, unknown>>;
     callsign_map: Array<Record<string, unknown>>;
   };
+}
+
+// ── Icon helpers ──────────────────────────────────────────────────────────────
+
+function mimeToExt(mime: string): string {
+  const map: Record<string, string> = {
+    'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif',
+    'image/svg+xml': 'svg', 'image/webp': 'webp',
+  };
+  return map[mime] ?? 'bin';
+}
+
+function sanitizeName(name: string): string {
+  return String(name).replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 50);
+}
+
+/**
+ * Extracts a base64 data URI into a binary file inside the ZIP.
+ * Returns the ZIP-internal path on success, null if nothing to extract.
+ */
+function addIconToZip(
+  zip: JSZip,
+  dataUri: string | null | undefined,
+  zipPath: string,
+): string | null {
+  if (!dataUri || !dataUri.startsWith('data:')) return null;
+  const match = dataUri.match(/^data:([^;]+);base64,(.+)$/s);
+  if (!match) return null;
+  const fullPath = `${zipPath}.${mimeToExt(match[1])}`;
+  zip.file(fullPath, Buffer.from(match[2], 'base64'));
+  return fullPath;
 }
 
 // ── Validation helpers ────────────────────────────────────────────────────────
@@ -40,32 +73,66 @@ export async function adminBackupRoutes(fastify: FastifyInstance) {
   // ── Export ────────────────────────────────────────────────────────────────
 
   fastify.get('/api/admin/backup/export', auth, async (_req, reply) => {
+    const zip = new JSZip();
+
+    // Config: extract logo_base64 as a separate file
+    const configRows = db.prepare('SELECT key, value FROM config').all() as Array<{ key: string; value: string }>;
+    const logoRow = configRows.find((r) => r.key === 'logo_base64');
+    const configWithoutLogo = configRows.filter((r) => r.key !== 'logo_base64');
+    const logoFile = logoRow?.value
+      ? addIconToZip(zip, logoRow.value, 'logo')
+      : null;
+
+    // AAO icons: store each as a real image file
+    const aaoIconsRaw = db.prepare('SELECT * FROM aao_icons').all() as Array<{ id: number; name: string; data: string }>;
+    const aaoIconsForJson = aaoIconsRaw.map(({ data, ...rest }) => {
+      const iconFile = addIconToZip(zip, data, `icons/aao/${rest.id}_${sanitizeName(rest.name)}`);
+      return iconFile ? { ...rest, icon_file: iconFile } : rest;
+    });
+
+    // Einsatzmittel: store each icon as a real image file
+    const emRaw = db.prepare('SELECT * FROM einsatzmittel').all() as Array<Record<string, unknown>>;
+    const emForJson = emRaw.map((em) => {
+      const { icon_data, ...rest } = em as { icon_data?: string | null } & Record<string, unknown>;
+      const iconFile = addIconToZip(
+        zip,
+        icon_data,
+        `icons/einsatzmittel/${String(em.id)}_${sanitizeName(String(em.name))}`,
+      );
+      return iconFile ? { ...rest, icon_file: iconFile } : rest;
+    });
+
     const backup: BackupV1 = {
       version: 1,
       exportedAt: new Date().toISOString(),
+      logo_file: logoFile,
       tables: {
-        config: db.prepare('SELECT key, value FROM config').all() as BackupV1['tables']['config'],
+        config: configWithoutLogo,
         gauge_stations: db.prepare('SELECT * FROM gauge_stations').all() as BackupV1['tables']['gauge_stations'],
         layouts: db.prepare('SELECT * FROM layouts').all() as BackupV1['tables']['layouts'],
-        einsatzmittel: db.prepare('SELECT * FROM einsatzmittel').all() as BackupV1['tables']['einsatzmittel'],
-        aao_icons: db.prepare('SELECT * FROM aao_icons').all() as BackupV1['tables']['aao_icons'],
+        einsatzmittel: emForJson,
+        aao_icons: aaoIconsForJson,
         callsign_map: db.prepare('SELECT * FROM callsign_map').all() as BackupV1['tables']['callsign_map'],
       },
     };
 
+    zip.file('backup.json', JSON.stringify(backup, null, 2));
+    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+
     const date = new Date().toISOString().slice(0, 10);
-    reply.header('Content-Disposition', `attachment; filename="pegelboard-backup-${date}.json"`);
-    reply.header('Content-Type', 'application/json; charset=utf-8');
-    return reply.send(JSON.stringify(backup, null, 2));
+    reply.header('Content-Disposition', `attachment; filename="pegelboard-backup-${date}.zip"`);
+    reply.header('Content-Type', 'application/zip');
+    return reply.send(zipBuffer);
   });
 
   // ── Import ────────────────────────────────────────────────────────────────
+  // Receives fully-resolved JSON (base64 already re-embedded by the frontend).
 
   fastify.post(
     '/api/admin/backup/import',
     {
       ...auth,
-      bodyLimit: 50 * 1024 * 1024, // 50 MB — aao_icons can be large base64 blobs
+      bodyLimit: 50 * 1024 * 1024, // 50 MB — icons can be large base64 blobs
       schema: { body: { type: 'object', additionalProperties: true } },
     },
     async (req, reply) => {
@@ -232,7 +299,7 @@ export async function adminBackupRoutes(fastify: FastifyInstance) {
           imported.aao_icons = n;
         }
 
-        // callsign_map — insert-only when no matching row exists (display_name + pattern combo)
+        // callsign_map — insert-only when no matching row exists
         if (Array.isArray(tables.callsign_map)) {
           let n = 0;
           for (const row of tables.callsign_map as unknown[]) {

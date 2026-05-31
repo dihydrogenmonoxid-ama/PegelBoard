@@ -23,6 +23,7 @@ const ALLOWED_KEYS = new Set([
   'radar_animated',
   'radar_opacity',
   'aao_position',
+  'aao_enabled',
   'em_name_mode',
   // Warnfarben
   'color_warn_normal',

@@ -53,9 +53,9 @@ export default function ForecastWidget({ embedded = false }: ForecastWidgetProps
   if (hours.length === 0) return null;
 
   return (
-    <div className={`${embedded ? '' : 'glass rounded-xl '}p-2 flex-shrink-0`}>
-      <p className="text-xs font-bold mb-1.5 px-1" style={{ color: 'var(--color-pb-blue-light)' }}>VORHERSAGE</p>
-      <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${hours.length}, 1fr)` }}>
+    <div className={`${embedded ? '' : 'glass rounded-xl '}p-3 flex-shrink-0`}>
+      <p className="text-xs font-bold mb-2 px-1" style={{ color: 'var(--color-pb-blue-light)' }}>VORHERSAGE</p>
+      <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${hours.length}, 1fr)` }}>
         {hours.map((h) => (
           <div key={h.timestamp} className="flex flex-col items-center gap-0.5 text-center">
             <span className="text-xs" style={{ color: 'var(--theme-text-muted)' }}>{formatHour(h.timestamp)}</span>

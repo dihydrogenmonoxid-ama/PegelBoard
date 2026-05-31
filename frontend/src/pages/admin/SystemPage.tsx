@@ -1,5 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
+import JSZip from 'jszip';
 import { api, ApiError } from '../../api';
+
+// ── Icon helpers (ZIP import) ─────────────────────────────────────────────────
+
+function uint8ArrayToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunk = 8192;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+function extToMime(ext: string): string {
+  const map: Record<string, string> = {
+    png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+    gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp',
+  };
+  return map[ext.toLowerCase()] ?? 'application/octet-stream';
+}
+
+async function resolveIconFile(zip: JSZip, path: string): Promise<string | null> {
+  const entry = zip.file(path);
+  if (!entry) return null;
+  const bytes = await entry.async('uint8array');
+  const ext = path.split('.').pop() ?? 'bin';
+  return `data:${extToMime(ext)};base64,${uint8ArrayToBase64(bytes)}`;
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -49,7 +77,7 @@ const inputCls =
 
 export default function SystemPage() {
   return (
-    <div className="flex flex-col gap-8 max-w-2xl">
+    <div className="flex flex-col gap-5 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold text-white">System</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--theme-text-faint)' }}>
@@ -117,7 +145,7 @@ function UpdateSection() {
   const isRunning = status === 'running';
 
   return (
-    <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+    <section className="glass rounded-2xl p-4 flex flex-col gap-4">
       <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--theme-text-muted)' }}>
         System-Update (GitHub)
       </h2>
@@ -266,7 +294,7 @@ function BackupSection() {
       a.href = url;
       const cd = res.headers.get('Content-Disposition') ?? '';
       const match = cd.match(/filename="([^"]+)"/);
-      a.download = match?.[1] ?? 'pegelboard-backup.json';
+      a.download = match?.[1] ?? 'pegelboard-backup.zip';
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -276,7 +304,7 @@ function BackupSection() {
     }
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setPreview(null);
@@ -284,29 +312,69 @@ function BackupSection() {
     setParseError(null);
     setImportResult(null);
     setImportError(null);
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = JSON.parse(reader.result as string);
-        if (!data || typeof data !== 'object' || data.version !== 1) {
-          setParseError('Keine gültige PegelBoard-Backup-Datei (Version 1 erwartet).');
-          return;
-        }
-        const tables = data.tables ?? {};
-        const counts: Record<string, number> = {};
-        for (const key of ['config', 'gauge_stations', 'layouts', 'einsatzmittel', 'aao_icons', 'callsign_map']) {
-          if (Array.isArray(tables[key])) counts[key] = (tables[key] as unknown[]).length;
-        }
-        setPreview({ exportedAt: data.exportedAt ?? '', counts });
-        setParsedBackup(data);
-      } catch {
-        setParseError('Datei konnte nicht gelesen werden (kein gültiges JSON).');
-      }
-    };
-    reader.readAsText(file);
     // Reset file input so the same file can be picked again
     e.target.value = '';
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(arrayBuffer);
+      const jsonFile = zip.file('backup.json');
+      if (!jsonFile) {
+        setParseError('Keine backup.json in der ZIP-Datei gefunden.');
+        return;
+      }
+      const jsonStr = await jsonFile.async('string');
+      const data = JSON.parse(jsonStr);
+      if (!data || typeof data !== 'object' || data.version !== 1) {
+        setParseError('Keine gültige PegelBoard-Backup-Datei (Version 1 erwartet).');
+        return;
+      }
+
+      // ── Resolve icon files back to base64 ──────────────────────────────
+
+      // Logo
+      if (typeof data.logo_file === 'string') {
+        const logoDataUri = await resolveIconFile(zip, data.logo_file);
+        if (logoDataUri) {
+          if (!data.tables.config) data.tables.config = [];
+          data.tables.config = (data.tables.config as Array<{ key: string }>)
+            .filter((r) => r.key !== 'logo_base64');
+          data.tables.config.push({ key: 'logo_base64', value: logoDataUri });
+        }
+      }
+
+      // AAO icons
+      if (Array.isArray(data.tables.aao_icons)) {
+        for (const icon of data.tables.aao_icons as Array<Record<string, unknown>>) {
+          if (typeof icon['icon_file'] === 'string' && !icon['data']) {
+            const resolved = await resolveIconFile(zip, icon['icon_file'] as string);
+            if (resolved) icon['data'] = resolved;
+          }
+        }
+      }
+
+      // Einsatzmittel icons
+      if (Array.isArray(data.tables.einsatzmittel)) {
+        for (const em of data.tables.einsatzmittel as Array<Record<string, unknown>>) {
+          if (typeof em['icon_file'] === 'string' && !em['icon_data']) {
+            const resolved = await resolveIconFile(zip, em['icon_file'] as string);
+            if (resolved) em['icon_data'] = resolved;
+          }
+        }
+      }
+
+      // ── Preview counts ─────────────────────────────────────────────────
+
+      const tables = data.tables ?? {};
+      const counts: Record<string, number> = {};
+      for (const key of ['config', 'gauge_stations', 'layouts', 'einsatzmittel', 'aao_icons', 'callsign_map']) {
+        if (Array.isArray(tables[key])) counts[key] = (tables[key] as unknown[]).length;
+      }
+      setPreview({ exportedAt: data.exportedAt ?? '', counts });
+      setParsedBackup(data);
+    } catch {
+      setParseError('Datei konnte nicht gelesen werden. Bitte eine gültige PegelBoard-ZIP-Datei wählen.');
+    }
   }
 
   async function handleImport() {
@@ -342,7 +410,7 @@ function BackupSection() {
   };
 
   return (
-    <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+    <section className="glass rounded-2xl p-4 flex flex-col gap-4">
       <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--theme-text-muted)' }}>
         Datensicherung
       </h2>
@@ -351,7 +419,7 @@ function BackupSection() {
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium text-white">Konfiguration exportieren</p>
         <p className="text-xs" style={{ color: 'var(--theme-text-faint)' }}>
-          Speichert Konfiguration, Pegelstationen, Einsatzmittel und AAO-Icons als JSON.
+          Speichert Konfiguration, Pegelstationen, Einsatzmittel und AAO-Icons als ZIP-Archiv.
           Passwörter werden nicht exportiert.
         </p>
         <div>
@@ -386,9 +454,9 @@ function BackupSection() {
               Backup-Datei auswählen
             </span>
             <span className="text-xs" style={{ color: 'var(--theme-text-faint)' }}>
-              pegelboard-backup-*.json
+              pegelboard-backup-*.zip
             </span>
-            <input ref={fileInputRef} type="file" accept=".json,application/json" className="sr-only" onChange={handleFileChange} />
+            <input ref={fileInputRef} type="file" accept=".zip,application/zip" className="sr-only" onChange={handleFileChange} />
           </label>
         )}
 
@@ -504,7 +572,7 @@ function PasswordSection() {
   }
 
   return (
-    <section className="glass rounded-2xl p-6 flex flex-col gap-5">
+    <section className="glass rounded-2xl p-4 flex flex-col gap-4">
       <div>
         <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--theme-text-muted)' }}>
           Passwort ändern

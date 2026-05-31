@@ -1,6 +1,6 @@
 {
   "name": "@pegelboard/backend",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,11 +21,13 @@
     "fast-xml-parser": "^4.5.3",
     "fastify": "^5.3.2",
     "fastify-plugin": "^5.0.1",
+    "jszip": "^3.10.1",
     "node-fetch": "^3.3.2",
     "onoff": "^6.0.3",
     "suncalc": "^1.9.0"
   },
   "devDependencies": {
+    "@types/jszip": "^3.4.0",
     "@types/node": "^22.15.21",
     "@types/suncalc": "^1.9.2",
     "tsx": "^4.19.4",
