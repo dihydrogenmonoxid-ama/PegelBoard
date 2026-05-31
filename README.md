@@ -13,10 +13,6 @@
   Relevante Wasserinformationen – auf einen Blick, in Echtzeit.
 </p>
 
-<p align="center">
-  <img src="design/2026-05-31 PegelBoard.png" alt="PegelBoard Dashboard" width="100%" />
-</p>
-
 ![License](https://img.shields.io/github/license/dihydrogenmonoxid-ama/PegelBoard)
 ![Stars](https://img.shields.io/github/stars/dihydrogenmonoxid-ama/PegelBoard)
 ![Issues](https://img.shields.io/github/issues/dihydrogenmonoxid-ama/PegelBoard)
@@ -39,23 +35,9 @@ PegelBoard ist ein Informationssystem, das z.B. auf einem **Raspberry Pi** läuf
 
 Das Dashboard ist für **große Monitore und Lageräume** konzipiert: lesbar aus 3–5 Metern Entfernung, optimiert für dunkle Einsatzzentralen, automatisch hell bei Tageslicht.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  🟢 PegelBoard   08:42:17   🌅 05:14  🌇 20:51          Admin  │
-├──────────────┬────────────────────────────┬─────────────────────┤
-│              │                            │  15.3 °C ☀️         │
-│  Elbe        │                            │  Wind: 12 km/h NW   │
-│  ████ 423 cm │     [  Karte  ]            │  Böen: 22 km/h      │
-│  ↑ +2.1 cm/h │                            │                     │
-│  🌡 14.2 °C  │   Pegelmarker ●  ●  ●      │  ⏱ 09h ⏱ 10h ...  │
-│              │   Regenradar 🌧️ (toggle)   │                     │
-│  Saale       │   Heli-Layer 🚁            │                     │
-│  ███ 187 cm  │                            │                     │
-│  → 0.0 cm/h  │                            │                     │
-├──────────────┴────────────────────────────┴─────────────────────┤
-│  ⚠ NINA: Hochwasserwarnung       │ z.B. Tagesschau-Meldungen  │ 📋 │
-└─────────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="design/2026-05-31 PegelBoard.png" alt="PegelBoard Dashboard" width="100%" />
+</p>
 
 ---
 
