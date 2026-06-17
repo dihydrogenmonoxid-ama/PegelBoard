@@ -5,6 +5,14 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 ---
 
+## [0.4.1] – 2026-06-17
+
+### Behoben
+- **Freshness-Badge nutzt Poll-Intervall** – Der Status-Badge oben rechts („Aktuell" / „Daten veraltet") vergleicht die letzte erfolgreiche PEGELONLINE-Abfrage jetzt gegen das konfigurierte `poll_interval_ms` (Standard: 2 Minuten) statt einer hardcodierten 2-Stunden-Schwelle; `/api/status` liefert `poll_interval_ms` als zusätzliches Feld
+- **README: Raspberry Pi Abschnitt korrigiert** – Fehlende Systemabhängigkeit `fonts-noto-color-emoji` ergänzt; nicht vorhandenes `deploy/`-Verzeichnis entfernt und durch vollständige manuelle `systemd`-Anleitung ersetzt (inkl. Hinweis auf absoluten Node-Pfad wegen nvm); Port in Kiosk-URL auf `4000` korrigiert; gemessene Bootzeit (ca. 1:45 min auf Pi 3 / 1 GB RAM) dokumentiert
+
+---
+
 ## [0.4.0] – 2026-05-31
 
 ### Neu

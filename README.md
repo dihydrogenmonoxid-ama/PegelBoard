@@ -129,25 +129,61 @@ Das System erkennt beim ersten Login das Standardpasswort und ersetzt den intern
 
 ## Auf dem Raspberry Pi installieren
 
+> **Gemessen:** Bootzeit bis Dashboard sichtbar auf einem **Raspberry Pi 3 (1 GB RAM)** ca. **1:45 min**.
+
 ```bash
-# Auf dem Pi:
+# Systemabhängigkeiten (Raspberry Pi OS)
+sudo apt install -y fonts-noto-color-emoji   # Emoji-Schrift für Warnmeldungen
+
+# Projekt klonen und bauen
 git clone https://github.com/dihydrogenmonoxid-ama/PegelBoard.git
-cd pegelboard
+cd PegelBoard
 npm install
 npm run build          # Backend + Frontend bauen
-
-# Als Systemdienst starten
-sudo cp deploy/pegelboard.service /etc/systemd/system/
-sudo systemctl enable --now pegelboard
 ```
 
-Das Dashboard ist danach unter **http://pegelboard.local** erreichbar.
+### Systemdienst einrichten
 
-Für den Kiosk-Modus (Chromium fullscreen beim Booten):
+Das Repo enthält keine fertige Service-Datei. Anlegen mit:
+
+```bash
+sudo nano /etc/systemd/system/pegelboard.service
+```
+
+Inhalt (Pfade an den eigenen Nutzer und Node-Pfad anpassen – `which node` liefert den absoluten Pfad; systemd lädt kein nvm-Environment):
+
+```ini
+[Unit]
+Description=PegelBoard Einsatzmonitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=<nutzer>
+WorkingDirectory=/home/<nutzer>/PegelBoard
+ExecStart=/usr/bin/node /home/<nutzer>/PegelBoard/backend/dist/index.js
+Environment=NODE_ENV=production
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now pegelboard
+journalctl -u pegelboard -f   # Logs prüfen; Port (Standard: 4000) erscheint hier
+```
+
+Das Backend läuft standardmäßig auf **Port 4000**. Im Netzwerk ist das Dashboard unter `http://<pi-ip>:4000` erreichbar. Falls Port 80 gewünscht ist, muss in der `[Service]`-Sektion `AmbientCapabilities=CAP_NET_BIND_SERVICE` und `PORT=80` ergänzt werden.
+
+### Kiosk-Modus (Chromium fullscreen beim Booten)
 
 ```bash
 # In /etc/xdg/openbox/autostart oder ~/.config/lxsession/LXDE-pi/autostart:
-chromium-browser --kiosk --noerrdialogs --disable-infobars http://pegelboard.local
+chromium-browser --kiosk --noerrdialogs --disable-infobars http://localhost:4000
 ```
 
 ---
@@ -231,6 +267,10 @@ Keine Cloud-Abhängigkeiten. Keine externen Dienste außer den Datenquellen. Lä
 ## Changelog
 
 Die vollständige Versionshistorie befindet sich in [CHANGELOG.md](CHANGELOG.md).
+
+### v0.4.1 – Juni 2026
+- **Freshness-Badge** zeigt „Aktuell" jetzt korrekt anhand des konfigurierten Poll-Intervalls (Standard: 2 Min) statt einer hardcodierten 2-Stunden-Schwelle
+- **README Raspberry Pi** – `fonts-noto-color-emoji` als Pflichtpaket ergänzt, fehlerhafter `deploy/`-Verweis durch vollständige systemd-Anleitung ersetzt, Kiosk-URL auf Port 4000 korrigiert, Bootzeit dokumentiert (ca. 1:45 min auf Pi 3 / 1 GB RAM)
 
 ### v0.4.0 – Mai 2026
 - **Backup als ZIP** – Icons und Logo als echte Dateien im Archiv, nicht als Base64 eingebettet

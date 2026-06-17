@@ -14,6 +14,11 @@ interface SourceStatus {
   last_ok: string | null;
 }
 
+interface StatusResponse {
+  sources: SourceStatus[];
+  poll_interval_ms: number;
+}
+
 interface TopBarProps {
   wsConnected: boolean;
   onThemeChange?: (theme: 'dark' | 'light') => void;
@@ -68,12 +73,12 @@ export default function TopBar({ wsConnected, onThemeChange, daynightMode = 'aut
 
   useEffect(() => {
     const checkStatus = () => {
-      api.get<{ sources: SourceStatus[] }>('/api/status').then(({ sources }) => {
-        const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
-        const isStale = sources.some((s) => {
-          if (!s.last_ok) return true;
-          return new Date(s.last_ok).getTime() < twoHoursAgo;
-        });
+      api.get<StatusResponse>('/api/status').then(({ sources, poll_interval_ms }) => {
+        const pegelonline = sources.find((s) => s.source_key === 'pegelonline');
+        const threshold = Date.now() - poll_interval_ms;
+        const isStale =
+          !pegelonline?.last_ok ||
+          new Date(pegelonline.last_ok).getTime() < threshold;
         setStale(isStale);
       }).catch(() => setStale(true));
     };
